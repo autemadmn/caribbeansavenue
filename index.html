@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#070606">
+    <title>Avenue Caribbean's | Cocktails & Drinks</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="menu-shell" aria-label="Carta digital Avenue Caribbean's">
+      <div class="page-indicator" aria-label="Navegacion de paginas">
+        <button class="page-dot is-active" type="button" data-target="0" aria-label="Ir a la pagina 01">
+          <span>01</span>
+        </button>
+        <button class="page-dot" type="button" data-target="1" aria-label="Ir a la pagina 02">
+          <span>02</span>
+        </button>
+        <button class="page-dot" type="button" data-target="2" aria-label="Ir a la pagina 03">
+          <span>03</span>
+        </button>
+        <button class="page-dot" type="button" data-target="3" aria-label="Ir a la pagina 04">
+          <span>04</span>
+        </button>
+        <button class="page-dot" type="button" data-target="4" aria-label="Ir a la pagina 05">
+          <span>05</span>
+        </button>
+      </div>
+
+      <section class="snap-track" id="menuTrack" tabindex="0" aria-live="polite">
+        <article class="slide slide-cover" id="portada" data-slide="0" aria-label="Portada">
+          <div class="image-layer" style="--image-url: url('assets/hero-cocktail.jpg')"></div>
+          <div class="slide-shade"></div>
+          <div class="cover-content">
+            <p class="venue-mark">Avenue Caribbean's</p>
+            <h1>Cocktails &amp; Drinks</h1>
+            <p class="small-caps">Sunset · Night · Atmosphere</p>
+            <div class="swipe-cue" aria-label="Desliza a la izquierda para ver la carta">
+              <span class="swipe-icon" aria-hidden="true">
+                <span class="finger"></span>
+                <span class="arrow-line"></span>
+              </span>
+              <span>
+                <strong>Desliza a la izquierda</strong>
+                <em>para ver la carta</em>
+              </span>
+            </div>
+          </div>
+        </article>
+
+        <article class="slide slide-menu slide-classic" id="clasicos-i" data-slide="1" aria-label="Cocktails clasicos uno">
+          <div class="image-layer" style="--image-url: url('assets/cocktail-classic.jpg')"></div>
+          <div class="slide-shade"></div>
+          <div class="slide-content">
+            <header class="section-heading">
+              <p>Cocktails</p>
+              <h2>Clásicos I</h2>
+            </header>
+            <div class="product-list" data-category="classicOne"></div>
+          </div>
+        </article>
+
+        <article class="slide slide-menu slide-fresh" id="clasicos-ii" data-slide="2" aria-label="Mojitos y cocktails frescos">
+          <div class="image-layer" style="--image-url: url('assets/mojito.jpg')"></div>
+          <div class="slide-shade"></div>
+          <div class="slide-content">
+            <header class="section-heading">
+              <p>Mojitos &amp; Fresh</p>
+              <h2>Clásicos II</h2>
+            </header>
+            <div class="product-list" data-category="fresh"></div>
+          </div>
+        </article>
+
+        <article class="slide slide-menu slide-amber" id="signatures" data-slide="3" aria-label="Spritz y signatures">
+          <div class="image-layer" style="--image-url: url('assets/aperol.jpg')"></div>
+          <div class="slide-shade"></div>
+          <div class="slide-content">
+            <header class="section-heading">
+              <p>Spritz &amp; Signatures</p>
+              <h2>Sunset Serve</h2>
+            </header>
+            <div class="product-list" data-category="signatures"></div>
+          </div>
+        </article>
+
+        <article class="slide slide-menu slide-valencia" id="valencia-classics" data-slide="4" aria-label="Valencia classics">
+          <div class="image-layer" style="--image-url: url('assets/sangria.jpg')"></div>
+          <div class="slide-shade"></div>
+          <div class="slide-content">
+            <header class="section-heading">
+              <p>Valencia Classics</p>
+              <h2>Agua &amp; Sangría</h2>
+            </header>
+            <div class="product-list" data-category="valencia"></div>
+            <footer class="fine-print" aria-label="Notas de la carta">
+              <p><span aria-hidden="true">◷</span> Precios tarde hasta las 22:30h.</p>
+              <p><span aria-hidden="true">◷</span> Precios noche desde las 22:30h.</p>
+              <p><span aria-hidden="true">✦</span> Todos nuestros cócteles se realizan al momento con fruta natural deshidratada.</p>
+              <p><span aria-hidden="true">!</span> Algunos productos pueden contener lactosa. Consulte a nuestro personal por los alérgenos.</p>
+            </footer>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <div class="modal" id="productModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close-modal></div>
+      <section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <button class="modal-close" type="button" data-close-modal aria-label="Cerrar detalle">Cerrar</button>
+        <p class="modal-kicker" id="modalCategory">Avenue Caribbean's</p>
+        <h2 id="modalTitle">Producto</h2>
+        <p class="modal-price" id="modalPrice">10€</p>
+        <p class="modal-description" id="modalDescription"></p>
+        <p class="modal-note" id="modalNote"></p>
+      </section>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
