@@ -41,6 +41,14 @@ button {
   position: relative;
   height: 100dvh;
   overflow: hidden;
+  --crystal-shift: 0px;
+  --crystal-glow-shift: 0px;
+  --crystal-sweep-shift: -42%;
+  --crystal-rim-opacity: 0.16;
+  --crystal-glow-opacity: 0.075;
+  --crystal-sweep-opacity: 0;
+  --crystal-secondary-opacity: 0.045;
+  --crystal-brightness: 1;
   background:
     radial-gradient(circle at 18% 18%, rgba(215, 172, 103, 0.12), transparent 26rem),
     radial-gradient(circle at 88% 62%, rgba(139, 62, 63, 0.12), transparent 24rem),
@@ -141,6 +149,181 @@ button {
   z-index: 1;
 }
 
+.liquid-crystal {
+  --rim-left: 51%;
+  --rim-top: 34%;
+  --rim-width: min(48vw, 24rem);
+  --rim-height: clamp(0.85rem, 3vw, 1.45rem);
+  --rim-rotate: -2deg;
+  --glow-left: 46%;
+  --glow-top: 28%;
+  --glow-width: min(54vw, 27rem);
+  --glow-height: clamp(4.8rem, 16vw, 8rem);
+  --reflection-left: 63%;
+  --reflection-top: 51%;
+  --reflection-width: min(24vw, 11rem);
+  --reflection-height: clamp(0.5rem, 2vw, 0.9rem);
+  --reflection-rotate: -8deg;
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: none;
+  overflow: hidden;
+  pointer-events: none;
+  contain: paint;
+}
+
+.slide-cover .liquid-crystal,
+.slide-classic .liquid-crystal {
+  display: block;
+}
+
+.crystal-glow,
+.crystal-rim,
+.crystal-sweep,
+.crystal-reflection {
+  position: absolute;
+  pointer-events: none;
+  transform: translate3d(0, 0, 0);
+  transform-origin: center;
+  will-change: opacity, transform, filter;
+}
+
+.crystal-glow {
+  left: var(--glow-left);
+  top: var(--glow-top);
+  width: var(--glow-width);
+  height: var(--glow-height);
+  border-radius: 999px;
+  background:
+    radial-gradient(ellipse at 42% 50%, rgba(255, 226, 178, 0.22), rgba(218, 149, 71, 0.075) 34%, transparent 68%),
+    linear-gradient(90deg, transparent, rgba(255, 238, 204, 0.08), transparent);
+  opacity: var(--crystal-glow-opacity);
+  filter: blur(14px) brightness(var(--crystal-brightness));
+  mix-blend-mode: screen;
+  transform: translate3d(var(--crystal-glow-shift), 0, 0) rotate(var(--rim-rotate));
+  animation: crystal-glow-idle 9s ease-in-out infinite;
+}
+
+.crystal-rim {
+  left: var(--rim-left);
+  top: var(--rim-top);
+  width: var(--rim-width);
+  height: var(--rim-height);
+  border-radius: 999px;
+  opacity: var(--crystal-rim-opacity);
+  filter:
+    blur(0.22px)
+    brightness(var(--crystal-brightness))
+    drop-shadow(0 0 0.75rem rgba(255, 222, 171, 0.18));
+  mix-blend-mode: screen;
+  transform: translate3d(var(--crystal-shift), 0, 0) rotate(var(--rim-rotate));
+}
+
+.crystal-rim::before,
+.crystal-rim::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.crystal-rim::before {
+  background:
+    linear-gradient(90deg, transparent 0%, rgba(255, 235, 199, 0.13) 16%, rgba(255, 233, 191, 0.62) 45%, rgba(226, 169, 92, 0.24) 67%, transparent 100%),
+    radial-gradient(ellipse at 46% 42%, rgba(255, 255, 255, 0.4), transparent 42%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 4%, #000 34%, #000 58%, transparent 82%);
+  mask-image: linear-gradient(180deg, transparent 4%, #000 34%, #000 58%, transparent 82%);
+  animation: crystal-rim-idle 8s ease-in-out infinite;
+}
+
+.crystal-rim::after {
+  inset: 22% 5% 48%;
+  background: linear-gradient(90deg, transparent, rgba(255, 250, 231, 0.42), rgba(219, 158, 85, 0.12), transparent);
+  filter: blur(0.55px);
+  opacity: 0.5;
+}
+
+.crystal-sweep {
+  left: var(--rim-left);
+  top: calc(var(--rim-top) + 0.05rem);
+  width: clamp(4.4rem, 19vw, 9.4rem);
+  height: clamp(0.44rem, 1.7vw, 0.78rem);
+  border-radius: 999px;
+  background:
+    linear-gradient(90deg, transparent 0%, rgba(255, 250, 231, 0.16) 26%, rgba(255, 236, 199, 0.68) 52%, rgba(244, 198, 138, 0.16) 74%, transparent 100%);
+  opacity: var(--crystal-sweep-opacity);
+  filter: blur(0.75px) brightness(var(--crystal-brightness));
+  mix-blend-mode: screen;
+  transform: translate3d(calc(var(--crystal-sweep-shift) + var(--crystal-shift)), 0, 0) rotate(var(--rim-rotate));
+}
+
+.crystal-reflection {
+  left: var(--reflection-left);
+  top: var(--reflection-top);
+  width: var(--reflection-width);
+  height: var(--reflection-height);
+  border-radius: 999px;
+  background:
+    linear-gradient(90deg, transparent, rgba(255, 235, 198, 0.38), rgba(196, 117, 52, 0.1), transparent);
+  opacity: var(--crystal-secondary-opacity);
+  filter: blur(0.9px) brightness(var(--crystal-brightness));
+  mix-blend-mode: screen;
+  transform: translate3d(var(--crystal-glow-shift), 0, 0) rotate(var(--reflection-rotate));
+  animation: crystal-secondary-idle 7.5s ease-in-out infinite;
+}
+
+.slide-cover .liquid-crystal {
+  --rim-left: 56%;
+  --rim-top: 30%;
+  --rim-width: min(40vw, 21rem);
+  --rim-height: clamp(0.76rem, 2.4vw, 1.18rem);
+  --rim-rotate: -4deg;
+  --glow-left: 51%;
+  --glow-top: 24%;
+  --glow-width: min(45vw, 23rem);
+  --glow-height: clamp(4rem, 12vw, 6.6rem);
+  --reflection-left: 67%;
+  --reflection-top: 48%;
+  --reflection-width: min(18vw, 8.5rem);
+}
+
+.slide-classic .liquid-crystal {
+  --rim-left: 48.8%;
+  --rim-top: 36.2%;
+  --rim-width: min(58vw, 31rem);
+  --rim-height: clamp(0.95rem, 3.7vw, 1.65rem);
+  --rim-rotate: -1deg;
+  --glow-left: 45%;
+  --glow-top: 29.5%;
+  --glow-width: min(63vw, 32rem);
+  --glow-height: clamp(5.8rem, 17vw, 10.5rem);
+  --reflection-left: 64%;
+  --reflection-top: 52.5%;
+  --reflection-width: min(25vw, 12rem);
+  --reflection-rotate: -5deg;
+}
+
+.slide-fresh .liquid-crystal {
+  --rim-left: 55%;
+  --rim-top: 34%;
+  --rim-rotate: -5deg;
+}
+
+.slide-amber .liquid-crystal {
+  --rim-left: 54%;
+  --rim-top: 33%;
+  --rim-rotate: -3deg;
+  --glow-top: 27%;
+}
+
+.slide-valencia .liquid-crystal {
+  --rim-left: 53%;
+  --rim-top: 35%;
+  --rim-rotate: -6deg;
+  --glow-top: 29%;
+}
+
 .slide-cover .image-layer {
   background:
     linear-gradient(95deg, rgba(5, 5, 5, 0.82) 0%, rgba(8, 7, 7, 0.46) 48%, rgba(9, 7, 6, 0.26) 100%),
@@ -214,7 +397,6 @@ button {
   background-size: cover;
   filter: saturate(1.05) brightness(1.28) contrast(1.08);
   transform: scale(1.035);
-  animation: classic-bg-breathe 12s ease-in-out infinite alternate;
 }
 
 .slide-classic .image-layer::after {
@@ -466,15 +648,6 @@ button {
   stroke-linejoin: round;
 }
 
-@keyframes classic-bg-breathe {
-  from {
-    transform: scale(1.035) translate3d(0, 0, 0);
-  }
-  to {
-    transform: scale(1.055) translate3d(-0.35rem, 0.2rem, 0);
-  }
-}
-
 @keyframes classic-glow-breathe {
   0%,
   100% {
@@ -484,6 +657,38 @@ button {
   50% {
     opacity: 0.86;
     transform: translate3d(0.4rem, -0.2rem, 0);
+  }
+}
+
+@keyframes crystal-glow-idle {
+  0%,
+  100% {
+    filter: blur(14px) brightness(var(--crystal-brightness));
+  }
+  50% {
+    filter: blur(14px) brightness(calc(var(--crystal-brightness) + 0.04));
+  }
+}
+
+@keyframes crystal-rim-idle {
+  0%,
+  100% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes crystal-secondary-idle {
+  0%,
+  100% {
+    transform: translate3d(var(--crystal-glow-shift), 0, 0) rotate(var(--reflection-rotate));
+    filter: blur(0.9px) brightness(var(--crystal-brightness));
+  }
+  50% {
+    transform: translate3d(var(--crystal-glow-shift), -0.08rem, 0) rotate(var(--reflection-rotate));
+    filter: blur(0.9px) brightness(calc(var(--crystal-brightness) + 0.035));
   }
 }
 
@@ -510,7 +715,7 @@ button {
 .cover-content,
 .slide-content {
   position: relative;
-  z-index: 2;
+  z-index: 4;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -1100,6 +1305,26 @@ h1 {
     height: 1.55rem;
   }
 
+  .liquid-crystal {
+    --rim-left: 52%;
+    --rim-top: 33.5%;
+    --rim-width: 56vw;
+    --glow-left: 46%;
+    --glow-width: 62vw;
+    --reflection-left: 65%;
+  }
+
+  .slide-classic .liquid-crystal {
+    --rim-left: 46.5%;
+    --rim-top: 36.1%;
+    --rim-width: 66vw;
+    --glow-left: 42%;
+    --glow-top: 30%;
+    --glow-width: 70vw;
+    --reflection-left: 65%;
+    --reflection-top: 54.5%;
+  }
+
   .product-card {
     padding: 0.9rem 0;
   }
@@ -1311,6 +1536,10 @@ h1 {
     justify-self: start;
     margin-top: 0.35rem;
   }
+
+  .liquid-crystal {
+    opacity: 0.72;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1337,8 +1566,20 @@ h1 {
   .slide-classic .image-layer,
   .classic-poster-glow,
   .slide-classic .classic-content,
-  .slide-classic .product-card {
+  .slide-classic .product-card,
+  .liquid-crystal,
+  .liquid-crystal * {
     animation: none !important;
-    transform: none !important;
+  }
+
+  .menu-shell {
+    --crystal-shift: 0px !important;
+    --crystal-glow-shift: 0px !important;
+    --crystal-sweep-shift: -42% !important;
+    --crystal-rim-opacity: 0.14 !important;
+    --crystal-glow-opacity: 0.055 !important;
+    --crystal-sweep-opacity: 0 !important;
+    --crystal-secondary-opacity: 0.035 !important;
+    --crystal-brightness: 1 !important;
   }
 }

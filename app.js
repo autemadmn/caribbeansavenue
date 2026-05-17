@@ -103,6 +103,7 @@ const menuData = {
 };
 
 const track = document.querySelector("#menuTrack");
+const menuShell = document.querySelector(".menu-shell");
 const slides = [...document.querySelectorAll(".slide")];
 const pageDots = [...document.querySelectorAll(".page-dot")];
 const modal = document.querySelector("#productModal");
@@ -121,6 +122,13 @@ let isPreviewingSwipe = false;
 let fingerHintTimer = null;
 let previewTimer = null;
 let coverPointerStart = null;
+let crystalCurrent = 0;
+let crystalTarget = 0;
+let crystalDirection = 1;
+let crystalLastLeft = track?.scrollLeft || 0;
+let crystalLastTime = performance.now();
+let crystalFrame = null;
+let crystalSettleTimer = null;
 
 function getSessionFlag(key) {
   try {
@@ -136,6 +144,10 @@ function setSessionFlag(key) {
   } catch {
     // Session storage can be disabled in strict browser modes.
   }
+}
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
 }
 
 function markSwipePreviewShown() {
@@ -210,6 +222,117 @@ function scrollToSlide(index, behavior = "smooth") {
   }
 
   track.scrollTo({ left: slide.offsetLeft, behavior });
+}
+
+function setLiquidCrystalState(force) {
+  if (!menuShell) {
+    return;
+  }
+
+  const eased = force * force * (3 - 2 * force);
+  const shift = crystalDirection * eased * 6.55;
+  const glowShift = crystalDirection * eased * 2.8;
+  const sweepShift = -42 + crystalDirection * eased * 58;
+
+  menuShell.style.setProperty("--crystal-shift", `${shift.toFixed(2)}px`);
+  menuShell.style.setProperty("--crystal-glow-shift", `${glowShift.toFixed(2)}px`);
+  menuShell.style.setProperty("--crystal-sweep-shift", `${sweepShift.toFixed(2)}%`);
+  menuShell.style.setProperty("--crystal-rim-opacity", (0.16 + eased * 0.14).toFixed(3));
+  menuShell.style.setProperty("--crystal-glow-opacity", (0.075 + eased * 0.06).toFixed(3));
+  menuShell.style.setProperty("--crystal-sweep-opacity", (eased * 0.18).toFixed(3));
+  menuShell.style.setProperty("--crystal-secondary-opacity", (0.045 + eased * 0.085).toFixed(3));
+  menuShell.style.setProperty("--crystal-brightness", (1 + eased * 0.075).toFixed(3));
+}
+
+function scheduleLiquidCrystalFrame() {
+  if (!crystalFrame) {
+    crystalFrame = requestAnimationFrame(animateLiquidCrystal);
+  }
+}
+
+function animateLiquidCrystal() {
+  crystalFrame = null;
+
+  const easing = crystalTarget > crystalCurrent ? 0.24 : 0.07;
+  crystalCurrent += (crystalTarget - crystalCurrent) * easing;
+  crystalTarget *= 0.96;
+
+  if (crystalCurrent < 0.004 && crystalTarget < 0.004) {
+    crystalCurrent = 0;
+    crystalTarget = 0;
+    setLiquidCrystalState(0);
+    return;
+  }
+
+  setLiquidCrystalState(clamp(crystalCurrent, 0, 1));
+  scheduleLiquidCrystalFrame();
+}
+
+function reactLiquidCrystalToScroll() {
+  if (!track || reducedMotionQuery.matches) {
+    return;
+  }
+
+  const now = performance.now();
+  const left = track.scrollLeft;
+  const delta = left - crystalLastLeft;
+  const elapsed = Math.max(16, now - crystalLastTime);
+
+  crystalLastLeft = left;
+  crystalLastTime = now;
+
+  if (Math.abs(delta) < 0.2) {
+    return;
+  }
+
+  crystalDirection = Math.sign(delta) || crystalDirection;
+
+  const velocity = Math.abs(delta) / elapsed;
+  const pageWidth = Math.max(track.clientWidth, 1);
+  const distanceForce = clamp(Math.abs(delta) / (pageWidth * 0.16), 0, 0.36);
+  const velocityForce = clamp(velocity * 0.9, 0, 0.64);
+  const nextTarget = clamp(0.12 + distanceForce + velocityForce, 0, 1);
+
+  crystalTarget = Math.max(crystalTarget, nextTarget);
+  scheduleLiquidCrystalFrame();
+
+  window.clearTimeout(crystalSettleTimer);
+  crystalSettleTimer = window.setTimeout(() => {
+    crystalTarget = 0;
+    scheduleLiquidCrystalFrame();
+  }, 150);
+}
+
+function bindLiquidCrystal() {
+  if (!track || !menuShell || reducedMotionQuery.matches) {
+    return;
+  }
+
+  setLiquidCrystalState(0);
+
+  track.addEventListener("scroll", reactLiquidCrystalToScroll, { passive: true });
+
+  window.addEventListener(
+    "resize",
+    () => {
+      crystalLastLeft = track.scrollLeft;
+      crystalLastTime = performance.now();
+    },
+    { passive: true },
+  );
+
+  reducedMotionQuery.addEventListener?.("change", (event) => {
+    if (!event.matches) {
+      return;
+    }
+
+    window.clearTimeout(crystalSettleTimer);
+    cancelAnimationFrame(crystalFrame);
+    crystalFrame = null;
+    crystalCurrent = 0;
+    crystalTarget = 0;
+    setLiquidCrystalState(0);
+  });
 }
 
 function syncInitialPage() {
@@ -438,6 +561,7 @@ function observeSlides() {
 renderProducts();
 bindEvents();
 bindSwipeHint();
+bindLiquidCrystal();
 observeSlides();
 requestAnimationFrame(syncInitialPage);
 window.addEventListener("load", syncInitialPage);
