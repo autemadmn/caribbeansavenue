@@ -168,8 +168,8 @@ button {
   will-change: transform, opacity;
 }
 
-.slide-cover .cover-glow {
-  animation: cover-glow-swipe 2.4s cubic-bezier(0.22, 1, 0.36, 1) infinite both;
+.slide-cover.is-finger-hinting .cover-glow {
+  animation: cover-glow-swipe 2.4s cubic-bezier(0.22, 1, 0.36, 1) 2 both;
 }
 
 .slide-cover.is-previewing-swipe .cover-glow {
@@ -294,52 +294,41 @@ h1 {
   display: grid;
   place-items: center;
   flex: 0 0 auto;
-  --finger-travel: -2rem;
-  width: 6.2rem;
-  height: 4.7rem;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background:
-    radial-gradient(circle at 52% 52%, rgba(215, 172, 103, 0.3), transparent 64%),
-    rgba(0, 0, 0, 0.18);
-  backdrop-filter: blur(12px);
-  box-shadow:
-    0 0 2.4rem rgba(215, 172, 103, 0.16),
-    inset 0 0 1.2rem rgba(215, 172, 103, 0.06);
-  opacity: 0.92;
-  overflow: hidden;
+  --finger-travel: -1.8rem;
+  width: 5.35rem;
+  height: 4.05rem;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  opacity: 0.88;
+  overflow: visible;
   transform: translate3d(0, 0, 0);
   will-change: transform, opacity;
-  animation: finger-swipe-guide 2.4s cubic-bezier(0.22, 1, 0.36, 1) infinite both;
 }
 
 .swipe-icon::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(90deg, rgba(7, 6, 6, 0.14), transparent 48%, rgba(7, 6, 6, 0.16)),
-    radial-gradient(circle at 50% 50%, transparent 0%, rgba(7, 6, 6, 0.18) 78%);
-  pointer-events: none;
+  display: none;
 }
 
 .swipe-icon img {
-  width: 168%;
-  height: 168%;
-  max-width: none;
-  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
   opacity: 0.92;
-  transform: translate3d(-6%, 1%, 0) scale(1.02);
-  filter: sepia(0.28) saturate(1.12) brightness(1.3) contrast(1.08);
-  mix-blend-mode: screen;
+  filter: sepia(0.22) saturate(1.05) brightness(1.24) contrast(1.08)
+    drop-shadow(0 0 0.72rem rgba(215, 172, 103, 0.36));
   user-select: none;
   -webkit-user-drag: none;
+}
+
+.slide-cover.is-finger-hinting .swipe-icon {
+  animation: finger-swipe-guide 2.4s cubic-bezier(0.22, 1, 0.36, 1) 2 both;
 }
 
 @keyframes finger-swipe-guide {
   0%,
   100% {
-    opacity: 0.92;
+    opacity: 0.88;
     transform: translate3d(0, 0, 0);
   }
   22% {
@@ -347,7 +336,7 @@ h1 {
     transform: translate3d(0, 0, 0);
   }
   56% {
-    opacity: 0.74;
+    opacity: 0.72;
     transform: translate3d(var(--finger-travel), 0, 0);
   }
 }
@@ -714,10 +703,10 @@ h1 {
   }
 
   .swipe-icon {
-    --finger-travel: -1.55rem;
-    width: 4.55rem;
-    height: 3.45rem;
-    margin-left: 2rem;
+    --finger-travel: -1.35rem;
+    width: 3.95rem;
+    height: 3rem;
+    margin-left: 1.6rem;
   }
 
   .slide-content {
@@ -792,8 +781,8 @@ h1 {
   }
 
   .swipe-icon {
-    width: 4.4rem;
-    height: 3.3rem;
+    width: 3.85rem;
+    height: 2.9rem;
   }
 
   .section-heading {
@@ -827,7 +816,7 @@ h1 {
 
   .snap-track.is-previewing-swipe,
   .slide-cover.is-previewing-swipe .cover-glow,
-  .slide-cover .cover-glow {
+  .slide-cover.is-finger-hinting .cover-glow {
     animation: none !important;
     transform: none !important;
   }

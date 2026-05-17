@@ -118,6 +118,7 @@ let lastFocusedElement = null;
 let activeSlideIndex = 0;
 let hasShownSwipePreview = getSessionFlag(swipePreviewKey);
 let isPreviewingSwipe = false;
+let fingerHintTimer = null;
 let previewTimer = null;
 let coverPointerStart = null;
 
@@ -256,6 +257,22 @@ function closeModal() {
   lastFocusedElement?.focus();
 }
 
+function playFingerHint() {
+  if (!coverSlide || reducedMotionQuery.matches || activeSlideIndex !== 0) {
+    return;
+  }
+
+  window.clearTimeout(fingerHintTimer);
+  coverSlide.classList.remove("is-finger-hinting");
+
+  requestAnimationFrame(() => {
+    coverSlide.classList.add("is-finger-hinting");
+    fingerHintTimer = window.setTimeout(() => {
+      coverSlide.classList.remove("is-finger-hinting");
+    }, 5000);
+  });
+}
+
 function cancelSwipePreview(shouldRemember = false) {
   window.clearTimeout(previewTimer);
   track.classList.remove("is-previewing-swipe");
@@ -289,6 +306,13 @@ function isValidCoverTapTarget(target) {
   );
 }
 
+function isCoverInteractionTarget(target) {
+  return Boolean(
+    coverSlide?.contains(target)
+      && !target.closest("button, a, .page-indicator, .product-card, .modal"),
+  );
+}
+
 function bindSwipeHint() {
   if (!coverSlide || reducedMotionQuery.matches) {
     return;
@@ -297,7 +321,7 @@ function bindSwipeHint() {
   coverSlide.addEventListener(
     "pointerdown",
     (event) => {
-      if (activeSlideIndex !== 0 || hasShownSwipePreview || !isValidCoverTapTarget(event.target)) {
+      if (activeSlideIndex !== 0 || !isCoverInteractionTarget(event.target)) {
         coverPointerStart = null;
         return;
       }
@@ -332,7 +356,7 @@ function bindSwipeHint() {
   coverSlide.addEventListener(
     "pointerup",
     (event) => {
-      if (!coverPointerStart || coverPointerStart.cancelled || !isValidCoverTapTarget(event.target)) {
+      if (!coverPointerStart || coverPointerStart.cancelled || !isCoverInteractionTarget(event.target)) {
         coverPointerStart = null;
         return;
       }
@@ -342,7 +366,11 @@ function bindSwipeHint() {
       coverPointerStart = null;
 
       if (deltaX <= 10 && deltaY <= 10) {
-        previewSwipe();
+        playFingerHint();
+
+        if (!hasShownSwipePreview && isValidCoverTapTarget(event.target)) {
+          previewSwipe();
+        }
       }
     },
     { passive: true },
@@ -413,3 +441,4 @@ bindSwipeHint();
 observeSlides();
 requestAnimationFrame(syncInitialPage);
 window.addEventListener("load", syncInitialPage);
+requestAnimationFrame(playFingerHint);
