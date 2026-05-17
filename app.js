@@ -113,14 +113,11 @@ const modalNote = document.querySelector("#modalNote");
 const modalCategory = document.querySelector("#modalCategory");
 const coverSlide = document.querySelector(".slide-cover");
 const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-const swipeHintKey = "swipeHintShown";
 const swipePreviewKey = "swipePreviewShown";
 let lastFocusedElement = null;
 let activeSlideIndex = 0;
-let hasShownSwipeHint = getSessionFlag(swipeHintKey);
 let hasShownSwipePreview = getSessionFlag(swipePreviewKey);
 let isPreviewingSwipe = false;
-let swipeHintTimer = null;
 let previewTimer = null;
 let coverPointerStart = null;
 
@@ -138,11 +135,6 @@ function setSessionFlag(key) {
   } catch {
     // Session storage can be disabled in strict browser modes.
   }
-}
-
-function markSwipeHintShown() {
-  hasShownSwipeHint = true;
-  setSessionFlag(swipeHintKey);
 }
 
 function markSwipePreviewShown() {
@@ -196,7 +188,6 @@ function updateActiveSlide(index) {
   });
 
   if (index !== 0) {
-    cancelSwipeHint();
     cancelSwipePreview();
   }
 }
@@ -265,31 +256,6 @@ function closeModal() {
   lastFocusedElement?.focus();
 }
 
-function startSwipeHint() {
-  if (!coverSlide || reducedMotionQuery.matches || hasShownSwipeHint) {
-    return;
-  }
-
-  coverSlide.classList.add("is-swipe-hint-running");
-  swipeHintTimer = window.setTimeout(() => {
-    coverSlide.classList.remove("is-swipe-hint-running");
-    markSwipeHintShown();
-  }, 7900);
-}
-
-function cancelSwipeHint(shouldRemember = true) {
-  if (!coverSlide) {
-    return;
-  }
-
-  window.clearTimeout(swipeHintTimer);
-  coverSlide.classList.remove("is-swipe-hint-running");
-
-  if (shouldRemember) {
-    markSwipeHintShown();
-  }
-}
-
 function cancelSwipePreview(shouldRemember = false) {
   window.clearTimeout(previewTimer);
   track.classList.remove("is-previewing-swipe");
@@ -307,7 +273,6 @@ function previewSwipe() {
   }
 
   isPreviewingSwipe = true;
-  cancelSwipeHint(false);
   track.classList.add("is-previewing-swipe");
   coverSlide?.classList.add("is-previewing-swipe");
 
@@ -358,7 +323,6 @@ function bindSwipeHint() {
 
       if (Math.abs(deltaX) > 14 || Math.abs(deltaY) > 14) {
         coverPointerStart.cancelled = true;
-        cancelSwipeHint();
         cancelSwipePreview(true);
       }
     },
@@ -388,7 +352,6 @@ function bindSwipeHint() {
     "scroll",
     () => {
       if (track.scrollLeft > 12) {
-        cancelSwipeHint();
         cancelSwipePreview(true);
       }
     },
@@ -399,7 +362,6 @@ function bindSwipeHint() {
 function bindEvents() {
   pageDots.forEach((dot) => {
     dot.addEventListener("click", () => {
-      cancelSwipeHint();
       cancelSwipePreview(true);
       scrollToSlide(Number(dot.dataset.target));
     });
@@ -451,4 +413,3 @@ bindSwipeHint();
 observeSlides();
 requestAnimationFrame(syncInitialPage);
 window.addEventListener("load", syncInitialPage);
-startSwipeHint();
