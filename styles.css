@@ -206,30 +206,30 @@ button {
 
 .slide-classic .image-layer {
   background:
-    linear-gradient(90deg, rgba(2, 2, 2, 0.9) 0%, rgba(3, 3, 3, 0.72) 37%, rgba(3, 3, 3, 0.16) 72%),
-    linear-gradient(0deg, rgba(0, 0, 0, 0.36) 0%, transparent 32%, rgba(0, 0, 0, 0.52) 100%),
+    linear-gradient(90deg, rgba(2, 2, 2, 0.72) 0%, rgba(3, 3, 3, 0.46) 37%, rgba(3, 3, 3, 0.04) 72%),
+    linear-gradient(0deg, rgba(0, 0, 0, 0.16) 0%, transparent 34%, rgba(0, 0, 0, 0.32) 100%),
     var(--image-url),
     linear-gradient(135deg, #080604, #22140c 52%, #050403);
   background-position: center right;
   background-size: cover;
-  filter: saturate(0.92) contrast(1.1);
+  filter: saturate(1.05) brightness(1.28) contrast(1.08);
   transform: scale(1.035);
   animation: classic-bg-breathe 12s ease-in-out infinite alternate;
 }
 
 .slide-classic .image-layer::after {
   background:
-    radial-gradient(circle at 10% 31%, rgba(193, 111, 31, 0.2), transparent 12rem),
-    repeating-linear-gradient(106deg, rgba(255, 255, 255, 0.026) 0 1px, transparent 1px 7px),
-    radial-gradient(circle at center, transparent 50%, rgba(0, 0, 0, 0.64) 100%);
-  opacity: 0.55;
+    radial-gradient(circle at 10% 31%, rgba(193, 111, 31, 0.28), transparent 13rem),
+    repeating-linear-gradient(106deg, rgba(255, 255, 255, 0.02) 0 1px, transparent 1px 7px),
+    radial-gradient(circle at center, transparent 54%, rgba(0, 0, 0, 0.34) 100%);
+  opacity: 0.42;
 }
 
 .slide-classic .slide-shade {
   z-index: 1;
   background:
-    linear-gradient(90deg, rgba(3, 3, 3, 0.94) 0%, rgba(5, 4, 4, 0.74) 43%, rgba(5, 4, 4, 0.18) 100%),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.52), transparent 28%, rgba(0, 0, 0, 0.58));
+    linear-gradient(90deg, rgba(3, 3, 3, 0.82) 0%, rgba(5, 4, 4, 0.55) 43%, rgba(5, 4, 4, 0.08) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.34), transparent 30%, rgba(0, 0, 0, 0.36));
 }
 
 .classic-poster-glow {
@@ -813,20 +813,26 @@ h1 {
 
 .page-indicator {
   position: fixed;
-  right: max(0.75rem, env(safe-area-inset-right));
-  top: 50%;
-  z-index: 8;
-  display: grid;
-  gap: 0.64rem;
-  transform: translateY(-50%);
+  left: 50%;
+  top: max(0.7rem, env(safe-area-inset-top));
+  z-index: 12;
+  display: flex;
+  gap: 0.38rem;
+  padding: 0.25rem 0.45rem;
+  border: 1px solid rgba(244, 198, 138, 0.14);
+  border-radius: 999px;
+  background: rgba(5, 5, 5, 0.34);
+  box-shadow: 0 0.9rem 2.2rem rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(14px);
+  transform: translateX(-50%);
 }
 
 .page-dot {
   position: relative;
   display: grid;
   place-items: center;
-  width: 2.7rem;
-  height: 2.1rem;
+  width: 2rem;
+  height: 1.7rem;
   padding: 0;
   color: rgba(247, 242, 232, 0.46);
   border: 0;
@@ -838,19 +844,19 @@ h1 {
   font-size: 0.68rem;
   font-weight: 800;
   letter-spacing: 0.16em;
-  writing-mode: vertical-rl;
+  writing-mode: horizontal-tb;
 }
 
 .page-dot::before {
   content: "";
   position: absolute;
-  left: 0.22rem;
-  top: 50%;
-  width: 1px;
-  height: 0;
+  left: 50%;
+  bottom: 0.1rem;
+  width: 0;
+  height: 1px;
   background: var(--gold);
-  transform: translateY(-50%);
-  transition: height 260ms ease;
+  transform: translateX(-50%);
+  transition: width 260ms ease;
 }
 
 .page-dot.is-active {
@@ -858,7 +864,7 @@ h1 {
 }
 
 .page-dot.is-active::before {
-  height: 1.35rem;
+  width: 1.15rem;
 }
 
 .modal {
@@ -1082,12 +1088,16 @@ h1 {
   }
 
   .page-indicator {
-    right: max(0.28rem, env(safe-area-inset-right));
-    gap: 0.36rem;
+    left: 50%;
+    top: max(0.52rem, env(safe-area-inset-top));
+    gap: 0.22rem;
+    padding: 0.22rem 0.36rem;
+    transform: translateX(-50%);
   }
 
   .page-dot {
-    width: 2.25rem;
+    width: 1.75rem;
+    height: 1.55rem;
   }
 
   .product-card {
