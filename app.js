@@ -111,7 +111,44 @@ const modalPrice = document.querySelector("#modalPrice");
 const modalDescription = document.querySelector("#modalDescription");
 const modalNote = document.querySelector("#modalNote");
 const modalCategory = document.querySelector("#modalCategory");
+const coverSlide = document.querySelector(".slide-cover");
+const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+const swipeHintKey = "swipeHintShown";
+const swipePreviewKey = "swipePreviewShown";
 let lastFocusedElement = null;
+let activeSlideIndex = 0;
+let hasShownSwipeHint = getSessionFlag(swipeHintKey);
+let hasShownSwipePreview = getSessionFlag(swipePreviewKey);
+let isPreviewingSwipe = false;
+let swipeHintTimer = null;
+let previewTimer = null;
+let coverPointerStart = null;
+
+function getSessionFlag(key) {
+  try {
+    return sessionStorage.getItem(key) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function setSessionFlag(key) {
+  try {
+    sessionStorage.setItem(key, "true");
+  } catch {
+    // Session storage can be disabled in strict browser modes.
+  }
+}
+
+function markSwipeHintShown() {
+  hasShownSwipeHint = true;
+  setSessionFlag(swipeHintKey);
+}
+
+function markSwipePreviewShown() {
+  hasShownSwipePreview = true;
+  setSessionFlag(swipePreviewKey);
+}
 
 function productTemplate(product, categoryLabel) {
   const button = document.createElement("button");
@@ -150,11 +187,18 @@ function renderProducts() {
 }
 
 function updateActiveSlide(index) {
+  activeSlideIndex = index;
+
   pageDots.forEach((dot, dotIndex) => {
     const isActive = dotIndex === index;
     dot.classList.toggle("is-active", isActive);
     dot.setAttribute("aria-current", isActive ? "page" : "false");
   });
+
+  if (index !== 0) {
+    cancelSwipeHint();
+    cancelSwipePreview();
+  }
 }
 
 function scrollToSlide(index, behavior = "smooth") {
@@ -221,9 +265,144 @@ function closeModal() {
   lastFocusedElement?.focus();
 }
 
+function startSwipeHint() {
+  if (!coverSlide || reducedMotionQuery.matches || hasShownSwipeHint) {
+    return;
+  }
+
+  coverSlide.classList.add("is-swipe-hint-running");
+  swipeHintTimer = window.setTimeout(() => {
+    coverSlide.classList.remove("is-swipe-hint-running");
+    markSwipeHintShown();
+  }, 7900);
+}
+
+function cancelSwipeHint(shouldRemember = true) {
+  if (!coverSlide) {
+    return;
+  }
+
+  window.clearTimeout(swipeHintTimer);
+  coverSlide.classList.remove("is-swipe-hint-running");
+
+  if (shouldRemember) {
+    markSwipeHintShown();
+  }
+}
+
+function cancelSwipePreview(shouldRemember = false) {
+  window.clearTimeout(previewTimer);
+  track.classList.remove("is-previewing-swipe");
+  coverSlide?.classList.remove("is-previewing-swipe");
+  isPreviewingSwipe = false;
+
+  if (shouldRemember) {
+    markSwipePreviewShown();
+  }
+}
+
+function previewSwipe() {
+  if (reducedMotionQuery.matches || hasShownSwipePreview || isPreviewingSwipe || activeSlideIndex !== 0 || track.scrollLeft > 4) {
+    return;
+  }
+
+  isPreviewingSwipe = true;
+  cancelSwipeHint(false);
+  track.classList.add("is-previewing-swipe");
+  coverSlide?.classList.add("is-previewing-swipe");
+
+  previewTimer = window.setTimeout(() => {
+    cancelSwipePreview(true);
+  }, 900);
+}
+
+function isValidCoverTapTarget(target) {
+  return Boolean(
+    coverSlide?.contains(target)
+      && !target.closest("button, a, .page-indicator, .swipe-cue, .product-card, .modal")
+      && !target.closest(".venue-mark, h1, .small-caps"),
+  );
+}
+
+function bindSwipeHint() {
+  if (!coverSlide || reducedMotionQuery.matches) {
+    return;
+  }
+
+  coverSlide.addEventListener(
+    "pointerdown",
+    (event) => {
+      if (activeSlideIndex !== 0 || hasShownSwipePreview || !isValidCoverTapTarget(event.target)) {
+        coverPointerStart = null;
+        return;
+      }
+
+      coverPointerStart = {
+        x: event.clientX,
+        y: event.clientY,
+        cancelled: false,
+      };
+    },
+    { passive: true },
+  );
+
+  coverSlide.addEventListener(
+    "pointermove",
+    (event) => {
+      if (!coverPointerStart) {
+        return;
+      }
+
+      const deltaX = event.clientX - coverPointerStart.x;
+      const deltaY = event.clientY - coverPointerStart.y;
+
+      if (Math.abs(deltaX) > 14 || Math.abs(deltaY) > 14) {
+        coverPointerStart.cancelled = true;
+        cancelSwipeHint();
+        cancelSwipePreview(true);
+      }
+    },
+    { passive: true },
+  );
+
+  coverSlide.addEventListener(
+    "pointerup",
+    (event) => {
+      if (!coverPointerStart || coverPointerStart.cancelled || !isValidCoverTapTarget(event.target)) {
+        coverPointerStart = null;
+        return;
+      }
+
+      const deltaX = Math.abs(event.clientX - coverPointerStart.x);
+      const deltaY = Math.abs(event.clientY - coverPointerStart.y);
+      coverPointerStart = null;
+
+      if (deltaX <= 10 && deltaY <= 10) {
+        previewSwipe();
+      }
+    },
+    { passive: true },
+  );
+
+  track.addEventListener(
+    "scroll",
+    () => {
+      if (track.scrollLeft > 12) {
+        cancelSwipeHint();
+        cancelSwipePreview(true);
+      }
+    },
+    { passive: true },
+  );
+}
+
 function bindEvents() {
   pageDots.forEach((dot) => {
-    dot.addEventListener("click", () => scrollToSlide(Number(dot.dataset.target)));
+    dot.addEventListener("click", () => {
+      cancelSwipeHint();
+      cancelSwipePreview(true);
+      scrollToSlide(Number(dot.dataset.target));
+    });
   });
 
   document.addEventListener("click", (event) => {
@@ -268,6 +447,8 @@ function observeSlides() {
 
 renderProducts();
 bindEvents();
+bindSwipeHint();
 observeSlides();
 requestAnimationFrame(syncInitialPage);
 window.addEventListener("load", syncInitialPage);
+startSwipeHint();

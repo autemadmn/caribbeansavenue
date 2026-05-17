@@ -83,10 +83,18 @@ button {
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
   scrollbar-width: none;
+  transform: translate3d(0, 0, 0);
+  transform-origin: left center;
+  will-change: transform;
 }
 
 .snap-track::-webkit-scrollbar {
   display: none;
+}
+
+.snap-track.is-previewing-swipe {
+  animation: swipe-preview 820ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  pointer-events: none;
 }
 
 .slide {
@@ -141,6 +149,31 @@ button {
     linear-gradient(135deg, #060505, #221612 58%, #070606);
   background-position: center right;
   background-size: cover;
+}
+
+.cover-glow {
+  position: absolute;
+  right: -14rem;
+  top: 12%;
+  z-index: 1;
+  width: min(46rem, 130vw);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(215, 172, 103, 0.14) 0%, rgba(210, 122, 61, 0.08) 28%, transparent 66%);
+  opacity: 0.62;
+  pointer-events: none;
+  transform: translate3d(0, 0, 0);
+  mix-blend-mode: screen;
+  will-change: transform, opacity;
+}
+
+.slide-cover.is-swipe-hint-running .cover-glow {
+  animation: cover-glow-swipe 2.4s cubic-bezier(0.22, 1, 0.36, 1) 3 both;
+}
+
+.slide-cover.is-previewing-swipe .cover-glow {
+  animation: cover-glow-preview 820ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .slide-fresh .image-layer {
@@ -260,72 +293,119 @@ h1 {
   position: relative;
   display: grid;
   place-items: center;
-  width: 3.5rem;
-  height: 3.5rem;
+  flex: 0 0 auto;
+  width: 4.4rem;
+  height: 3.35rem;
   border: 1px solid var(--line);
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.24);
-  backdrop-filter: blur(12px);
-}
-
-.finger {
-  position: absolute;
-  width: 0.58rem;
-  height: 1.3rem;
-  border: 1px solid rgba(247, 242, 232, 0.74);
   border-radius: 999px;
-  transform: translate(0.45rem, 0.3rem) rotate(-24deg);
+  background:
+    radial-gradient(circle at 52% 52%, rgba(215, 172, 103, 0.16), transparent 62%),
+    rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 0 2rem rgba(215, 172, 103, 0.08);
+  opacity: 0;
+  overflow: hidden;
+  transform: translate3d(0, 0, 0);
+  will-change: transform, opacity;
 }
 
-.finger::after {
+.swipe-icon::after {
   content: "";
   position: absolute;
-  width: 0.28rem;
-  height: 0.28rem;
-  top: 0.12rem;
-  left: 50%;
-  border-radius: 50%;
-  background: rgba(247, 242, 232, 0.82);
-  transform: translateX(-50%);
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(7, 6, 6, 0.46), transparent 46%, rgba(7, 6, 6, 0.32)),
+    radial-gradient(circle at 50% 50%, transparent 0%, rgba(7, 6, 6, 0.46) 74%);
+  pointer-events: none;
 }
 
-.arrow-line {
-  position: absolute;
-  width: 1.35rem;
-  height: 1px;
-  background: var(--gold);
-  transform: translateX(-0.2rem);
-  animation: cue-slide 2.8s ease-in-out infinite;
+.swipe-icon img {
+  width: 155%;
+  height: 155%;
+  max-width: none;
+  object-fit: cover;
+  opacity: 0.48;
+  transform: translate3d(-6%, 1%, 0) scale(1.02);
+  filter: sepia(0.55) saturate(0.75) brightness(0.9) contrast(1.12);
+  mix-blend-mode: screen;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
-.arrow-line::before,
-.arrow-line::after {
-  content: "";
-  position: absolute;
-  left: -0.04rem;
-  width: 0.48rem;
-  height: 1px;
-  background: var(--gold);
-  transform-origin: left center;
+.slide-cover.is-swipe-hint-running .swipe-icon {
+  animation:
+    finger-swipe-guide 2.4s cubic-bezier(0.22, 1, 0.36, 1) 3 both,
+    finger-swipe-dismiss 620ms ease 7.2s forwards;
 }
 
-.arrow-line::before {
-  transform: rotate(36deg);
+@keyframes finger-swipe-guide {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+  }
+  12% {
+    opacity: 0.56;
+  }
+  56% {
+    opacity: 0.34;
+    transform: translate3d(-1.9rem, 0, 0);
+  }
+  78% {
+    opacity: 0.5;
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    opacity: 0.5;
+    transform: translate3d(0, 0, 0);
+  }
 }
 
-.arrow-line::after {
-  transform: rotate(-36deg);
+@keyframes finger-swipe-dismiss {
+  to {
+    opacity: 0;
+    transform: translate3d(-0.4rem, 0, 0);
+    visibility: hidden;
+  }
 }
 
-@keyframes cue-slide {
+@keyframes cover-glow-swipe {
   0%,
   100% {
     opacity: 0.62;
-    transform: translateX(0.12rem);
+    transform: translate3d(0, 0, 0);
   }
-  50% {
-    opacity: 1;
-    transform: translateX(-0.45rem);
+  56% {
+    opacity: 0.68;
+    transform: translate3d(-0.45rem, 0, 0);
+  }
+}
+
+@keyframes cover-glow-preview {
+  0%,
+  100% {
+    opacity: 0.62;
+    transform: translate3d(0, 0, 0);
+  }
+  48% {
+    opacity: 0.7;
+    transform: translate3d(-0.5rem, 0, 0);
+  }
+  72% {
+    opacity: 0.64;
+    transform: translate3d(0.18rem, 0, 0);
+  }
+}
+
+@keyframes swipe-preview {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  48% {
+    transform: translate3d(-2.35rem, 0, 0);
+  }
+  72% {
+    transform: translate3d(0.45rem, 0, 0);
   }
 }
 
@@ -638,7 +718,21 @@ h1 {
 
   h1 {
     max-width: 7.4ch;
-    font-size: clamp(3.6rem, 16vw, 4.25rem);
+    font-size: clamp(3.45rem, 14.8vw, 3.75rem);
+  }
+
+  .swipe-cue {
+    gap: 0.72rem;
+  }
+
+  .swipe-cue strong {
+    font-size: clamp(1.16rem, 4.9vw, 1.45rem);
+  }
+
+  .swipe-icon {
+    width: 3.2rem;
+    height: 2.45rem;
+    margin-left: 2.4rem;
   }
 
   .slide-content {
@@ -713,8 +807,8 @@ h1 {
   }
 
   .swipe-icon {
-    width: 3rem;
-    height: 3rem;
+    width: 3.6rem;
+    height: 2.7rem;
   }
 
   .section-heading {
@@ -739,5 +833,16 @@ h1 {
     scroll-behavior: auto !important;
     animation-duration: 1ms !important;
     transition-duration: 1ms !important;
+  }
+
+  .swipe-icon {
+    display: none;
+  }
+
+  .snap-track.is-previewing-swipe,
+  .slide-cover.is-previewing-swipe .cover-glow,
+  .slide-cover.is-swipe-hint-running .cover-glow {
+    animation: none !important;
+    transform: none !important;
   }
 }
