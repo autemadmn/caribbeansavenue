@@ -138,7 +138,20 @@ async function tap(element) {
   await wait(30);
 }
 
-const visible = (element) => element && win.getComputedStyle(element).opacity === "1" && element.getBoundingClientRect().height > 0;
+// Really visible: the element and every container up to the document are fully opaque
+// (an invisible section hides ingredients whose own opacity is still 1).
+const visible = (element) => {
+  if (!element || element.getBoundingClientRect().height <= 0) {
+    return false;
+  }
+  for (let node = element; node && node.nodeType === 1; node = node.parentElement) {
+    const style = win.getComputedStyle(node);
+    if (style.opacity !== "1" || style.visibility === "hidden") {
+      return false;
+    }
+  }
+  return true;
+};
 
 /* ---------- Tests ---------- */
 
@@ -421,6 +434,28 @@ test("Cóctel: la escena se reproduce al abrir, al reabrir y al tocar la bebida"
   await tap(doc.querySelector('.dish[data-product="caipirinha"]'));
   await until(() => lib.motion.isRunning("scene"), 2000);
   expect(lib.motion.isRunning("scene"), "al reabrir no se repite");
+});
+
+test("Reabrir: la bebida y los ingredientes se ven también la segunda y la tercera vez", async () => {
+  await load();
+  const shown = () => {
+    const hero = doc.querySelector("#detailHero");
+    const drink = doc.querySelector("#detailHero canvas") || doc.querySelector("#detailHero img");
+    const items = [...doc.querySelectorAll("#detailIngredients li")];
+    return visible(hero) && visible(drink) && items.length > 0 && items.every(visible) && visible(doc.querySelector("#detailPrice"));
+  };
+  for (const id of ["caribbeans-spritz", "caribbeans-spritz", "porn-star-martini", "mojito-clasico", "caipirinha", "mojito-clasico"]) {
+    const page = lib.menu.products.get(id).category.page;
+    if (lib.book.current !== page) {
+      await goTo(page);
+    }
+    await tap(doc.querySelector(`.dish[data-product="${id}"]`));
+    await until(() => lib.motion.isRunning("scene"), 3000);
+    await until(() => !lib.motion.isRunning("scene") && !lib.motion.isRunning("detail"), 5000);
+    expect(shown(), `${id}: no se ve la bebida o sus ingredientes`);
+    doc.querySelector("#detail [data-close]").click();
+    await until(() => !lib.detail.isOpen);
+  }
 });
 
 test("Cócteles de autor: su foto cobra vida, ‘Ver de nuevo’ y vuelta a la misma página", async () => {

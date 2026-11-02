@@ -299,6 +299,7 @@ export function createProductDetail({ dialog, menu, motion, textMotion, config, 
       motion.finish("scene");
       teardownScene();
     }
+    clearClosingStyles();
 
     const locale = getLocale();
     fill(product, locale);
@@ -340,10 +341,20 @@ export function createProductDetail({ dialog, menu, motion, textMotion, config, 
     }
   }
 
+  // The closing fades the hero, the text and the sections to 0 and leaves them there. The next
+  // opening of an animated drink only brings back some of them, so without this the drink and its
+  // ingredients stayed invisible from the second sheet on (only name, price and description showed).
+  function clearClosingStyles() {
+    motion.gsap?.set([hero, nameEl, priceEl, descriptionEl, metaEl, allergensEl, ...dialog.querySelectorAll(".detail-section, .detail-section h3, .detail-bar")], {
+      clearProps: "opacity,transform,filter",
+    });
+  }
+
   function finishClose(source) {
     teardownScene();
     state = null;
     hero.replaceChildren();
+    clearClosingStyles();
     surface.removeAttribute("style");
     backdrop.removeAttribute("style");
     if (typeof dialog.close === "function") {
