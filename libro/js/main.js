@@ -217,6 +217,12 @@ if (params.get("product")) {
   window.setTimeout(() => detail.open(id, document.querySelector(`.dish[data-product="${CSS.escape(id)}"]`)), 400);
 }
 
+// The scene code (a few KB) arrives while the guest is still on the cover.
+if (config.features.cocktailExperience) {
+  const idle = window.requestIdleCallback || ((callback) => window.setTimeout(callback, 1500));
+  window.setTimeout(() => idle(() => detail.prepare(), { timeout: 4000 }), 2500);
+}
+
 // Read-only handle for tests/index.html.
 window.__libro = { book, detail, menu, motion, get locale() { return locale; }, setLocale };
 document.documentElement.dataset.ready = "true";

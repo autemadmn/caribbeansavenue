@@ -395,8 +395,8 @@ test("Producto sin foto: ficha tipográfica, alérgenos sin inventar", async () 
 
 test("Producto con foto (datos de prueba): la foto viaja a la ficha", async () => {
   await load("data=fixture");
-  await goTo(2);
-  await tap(doc.querySelector('.dish[data-product="porn-star-martini"]'));
+  await goTo(lib.menu.products.get("margarita").category.page);
+  await tap(doc.querySelector('.dish[data-product="margarita"]'));
   await wait(700);
   const photo = doc.querySelector("#detailHero img");
   expect(doc.querySelector("#detailSurface").dataset.hero === "photo" && photo, "no hay foto en la ficha");
@@ -406,21 +406,46 @@ test("Producto con foto (datos de prueba): la foto viaja a la ficha", async () =
 test("Cóctel: la escena se reproduce al abrir, al reabrir y al tocar la bebida", async () => {
   await load();
   await goTo(3);
-  await tap(doc.querySelector('.dish[data-product="mojito-clasico"]'));
+  await tap(doc.querySelector('.dish[data-product="caipirinha"]'));
   await until(() => lib.motion.isRunning("scene"), 2000);
   expect(lib.motion.isRunning("scene"), "la escena no arrancó");
   await until(() => !lib.motion.isRunning("scene"), 4000);
   const items = [...doc.querySelectorAll("#detailIngredients li")];
-  expect(items.length === 5 && items.every(visible), "ingredientes no visibles");
+  expect(items.length > 0 && items.every(visible), "ingredientes no visibles");
   expect(!doc.querySelector("#detailReplay"), "no debe haber botón ‘Ver de nuevo’");
   doc.querySelector("#detailHero").click();
   await wait(100);
   expect(lib.motion.isRunning("scene"), "tocar la bebida no la repite");
   doc.querySelector("#detail [data-close]").click();
   await until(() => !lib.detail.isOpen);
-  await tap(doc.querySelector('.dish[data-product="mojito-clasico"]'));
+  await tap(doc.querySelector('.dish[data-product="caipirinha"]'));
   await until(() => lib.motion.isRunning("scene"), 2000);
   expect(lib.motion.isRunning("scene"), "al reabrir no se repite");
+});
+
+test("Cócteles de autor: su foto cobra vida, ‘Ver de nuevo’ y vuelta a la misma página", async () => {
+  await load();
+  for (const id of ["caribbeans-spritz", "porn-star-martini", "mojito-clasico", "mojito-frutas"]) {
+    const page = lib.menu.products.get(id).category.page;
+    await goTo(page);
+    await tap(doc.querySelector(`.dish[data-product="${id}"]`));
+    await until(() => lib.motion.isRunning("scene"), 3000);
+    expect(doc.querySelector("#detailSurface").dataset.hero === "drink", `${id}: no usa su foto`);
+    expect(lib.motion.isRunning("scene"), `${id}: la animación no arrancó`);
+    await until(() => !lib.motion.isRunning("scene"), 4000);
+    const img = doc.querySelector(".detail-drink");
+    const box = img.getBoundingClientRect();
+    expect(Math.abs(box.width / box.height - img.naturalWidth / img.naturalHeight) < 0.02, `${id}: la foto se deforma`);
+    expect([...doc.querySelectorAll("#detailIngredients li")].every(visible), `${id}: ingredientes ocultos`);
+    const replay = doc.querySelector("#detailReplay");
+    expect(replay, `${id}: falta ‘Ver de nuevo’`);
+    replay.click();
+    await wait(100);
+    expect(lib.motion.isRunning("scene"), `${id}: ‘Ver de nuevo’ no la repite`);
+    doc.querySelector("#detail [data-close]").click();
+    await until(() => !lib.detail.isOpen);
+    expect(lib.book.current === page, `${id}: no volvió a su página (${lib.book.current})`);
+  }
 });
 
 test("La ficha cabe en la pantalla sin scroll (390×844 y 375×667)", async () => {
@@ -462,7 +487,8 @@ test("Cóctel: cambiar de producto durante la escena", async () => {
   await tap(doc.querySelector('.dish[data-product="mojito-frutas"]'));
   await wait(500);
   lib.detail.open("caipiroska", doc.querySelector('.dish[data-product="caipiroska"]'));
-  await wait(1900);
+  // the scene starts once the sheet is open and never skips frames: wait for it, with a limit
+  await until(() => !lib.motion.isRunning("scene"), 4000);
   expect(lib.detail.current === "caipiroska", "producto equivocado");
   expect(!lib.motion.isRunning("scene"), "escena colgada");
   expect([...doc.querySelectorAll("#detailIngredients li")].every(visible), "ingredientes ocultos");

@@ -4,7 +4,6 @@
 
 const UI_STRINGS = {
   es: {
-    classic: "Carta clásica",
     prev: "Anterior",
     next: "Siguiente",
     back: "Volver a la carta",
@@ -24,7 +23,6 @@ const UI_STRINGS = {
     goToPage: (title, page) => `${title}, página ${page}`,
   },
   en: {
-    classic: "Classic menu",
     prev: "Previous",
     next: "Next",
     back: "Back to the menu",

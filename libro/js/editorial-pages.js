@@ -28,7 +28,7 @@ function coverPage(menu, locale) {
       <span class="gold-rule" aria-hidden="true"></span>
       <p class="cover-tagline">${escape(menu.text(menu.restaurant.tagline, locale))}</p>
     </div>
-    <p class="cover-hint"><span>${escape(t.openHint)}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></p>`;
+    <p class="cover-hint"><span class="cover-hint-text">${escape(t.openHint)}</span><span class="cover-hint-hand" aria-hidden="true"><img src="../assets/img/dedo.webp" alt="" width="180" height="123" draggable="false"></span></p>`;
 }
 
 function contentsPage(menu, locale, pageIndex) {

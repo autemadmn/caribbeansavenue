@@ -77,6 +77,11 @@ export function createMotion(config) {
       return channels.has(channel);
     },
 
+    /** the timeline currently owning a channel, or null */
+    current(channel) {
+      return channels.get(channel) || null;
+    },
+
     onReducedChange(callback) {
       reducedQuery.addEventListener?.("change", callback);
     },

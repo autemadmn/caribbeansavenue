@@ -134,20 +134,6 @@ ol {
   bottom: calc(max(0.35rem, env(safe-area-inset-bottom)) + 0.45rem);
 }
 
-.chrome-link {
-  display: inline-flex;
-  flex: 0 0 auto;
-  white-space: nowrap;
-  align-items: center;
-  min-height: var(--ed-tap);
-  color: inherit;
-  text-decoration: underline;
-  font-size: 0.98rem;
-  text-decoration-color: rgba(224, 180, 110, 0.55);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.35em;
-}
-
 .folio {
   overflow: hidden;
   font-size: 0.98rem;
@@ -216,7 +202,6 @@ ol {
 
 @media (hover: hover) {
   .turn:not(:disabled):hover,
-  .chrome-link:hover,
   .lang button:hover {
     color: var(--ed-cream);
   }
@@ -646,19 +631,91 @@ ol {
   z-index: 2;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  color: var(--ed-cream-soft);
+  gap: 0.6rem;
+  color: var(--ed-cream);
   font-family: var(--ed-serif);
-  font-size: 1.1rem;
+  font-size: 1.18rem;
   font-style: italic;
+  pointer-events: none;
 }
 
-.cover-hint svg {
-  width: 1rem;
-  height: 1rem;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.5;
+/* The hint shows the gesture: the finger drags the page to the left while a gold light runs
+   through the words in the same direction. Loops with a rest, only on the cover. */
+.cover-hint-hand {
+  display: block;
+  flex: 0 0 auto;
+  width: 4rem;
+  height: 2.75rem;
+  margin: -0.4rem -0.5rem -0.4rem 0;
+  animation: cover-hint-drag 3.2s cubic-bezier(0.45, 0, 0.2, 1) 1.4s infinite both;
+}
+
+.cover-hint-hand img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: brightness(1.25) drop-shadow(0 0 0.6rem rgba(224, 180, 110, 0.45));
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .cover-hint-text {
+    padding-right: 0.12em; /* the italic overhang stays inside the painted box */
+    background: linear-gradient(100deg, var(--ed-cream) 0 42%, #ffe2a8 47%, var(--ed-gold) 50%, #ffe2a8 53%, var(--ed-cream) 58% 100%) 100% 0 / 300% 100% no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: cover-hint-shine 3.2s cubic-bezier(0.45, 0, 0.2, 1) 1.4s infinite both;
+  }
+}
+
+@keyframes cover-hint-drag {
+  0%,
+  12% {
+    opacity: 0.9;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  22% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(0.9); /* press */
+  }
+  52% {
+    opacity: 1;
+    transform: translate3d(-1.7rem, 0, 0) scale(0.9); /* drag */
+  }
+  62% {
+    opacity: 0;
+    transform: translate3d(-2rem, 0, 0) scale(1); /* lift */
+  }
+  63% {
+    opacity: 0;
+    transform: translate3d(0.5rem, 0, 0) scale(1);
+  }
+  78%,
+  100% {
+    opacity: 0.9;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes cover-hint-shine {
+  0%,
+  20% {
+    background-position: 100% 0;
+  }
+  60%,
+  100% {
+    background-position: 0% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cover-hint-hand,
+  .cover-hint-text {
+    animation: none !important;
+  }
 }
 
 /* Contents */
@@ -868,7 +925,7 @@ ol {
   pointer-events: auto;
 }
 
-.detail-surface:is([data-hero="scene"], [data-hero="photo"]) .detail-close {
+.detail-surface:is([data-hero="scene"], [data-hero="photo"], [data-hero="drink"]) .detail-close {
   border-color: rgba(243, 236, 224, 0.22);
   background: rgba(12, 9, 7, 0.5);
   color: var(--ed-on-dark);
@@ -883,8 +940,50 @@ ol {
   background: #0c0907;
 }
 
-.detail-surface[data-hero="scene"] .detail-hero {
+.detail-surface:is([data-hero="scene"], [data-hero="drink"]) .detail-hero {
   cursor: pointer;
+}
+
+/* the signature drinks: their photo on the studio black it was shot on, a little light behind */
+.detail-surface[data-hero="drink"] .detail-hero {
+  background: radial-gradient(ellipse 70% 60% at 50% 42%, #1c1510 0%, #0c0907 70%);
+}
+
+.detail-drink {
+  position: absolute;
+  display: block;
+  object-fit: contain;
+}
+
+/* facing «back», so it never sits on the glass */
+.detail-replay {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 0.6rem);
+  right: max(0.8rem, env(safe-area-inset-right));
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: var(--ed-tap);
+  padding: 0 0.8rem 0 0.6rem;
+  border: 1px solid rgba(243, 236, 224, 0.2);
+  border-radius: 999px;
+  background: rgba(12, 9, 7, 0.55);
+  color: var(--ed-on-dark);
+  font-family: var(--ed-serif);
+  font-size: 0.92rem;
+  font-style: italic;
+  cursor: pointer;
+}
+
+.detail-replay svg {
+  width: 0.95rem;
+  height: 0.95rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .detail-surface[data-hero="type"] .detail-hero {

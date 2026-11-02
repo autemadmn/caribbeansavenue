@@ -5,7 +5,8 @@
 import carta from "../../data/carta.js";
 
 const fixture = structuredClone(carta);
-const product = fixture.categories[0].products.find((item) => item.id === "porn-star-martini");
+// (not one of the four signature drinks: those show their own photograph, CocktailMotion)
+const product = fixture.categories.flatMap((category) => category.products).find((item) => item.id === "margarita");
 product.photo = { base: "copa", alt: { es: "Foto de prueba", en: "Test photo" } };
 
 export default fixture;

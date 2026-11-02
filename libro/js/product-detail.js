@@ -3,8 +3,14 @@
 // - Content is written before any animation starts: if motion is off or fails, it is all there.
 // - Cocktails with an `experience` get the microscene: it plays every time the sheet opens, and
 //   again whenever the drink itself is tapped.
+// - The four signature drinks (cocktail/motion-config.js) show their photograph instead, which
+//   comes alive for an instant (CocktailMotion). Without motion, the photo simply stays still.
 
+import { DURATION } from "./motion.js";
 import { createSharedTransition } from "./shared-transition.js";
+import { layoutPhoto, motionFor, photoSource } from "./cocktail/motion-config.js";
+
+const MAX_STEP = 0.05; // s of scene time per frame, at most
 
 export function createProductDetail({ dialog, menu, motion, textMotion, config, getLocale, backdrop, onFallbackFocus }) {
   const surface = dialog.querySelector("#detailSurface");
@@ -19,6 +25,7 @@ export function createProductDetail({ dialog, menu, motion, textMotion, config, 
 
   let state = null; // { product, source, scene, closing }
   let experienceModule = null;
+  let drinkModule = null;
 
   const loadExperience = () => {
     experienceModule ||= import("./cocktail/experience.js").catch((error) => {
@@ -26,6 +33,14 @@ export function createProductDetail({ dialog, menu, motion, textMotion, config, 
       throw error;
     });
     return experienceModule;
+  };
+
+  const loadDrinkMotion = () => {
+    drinkModule ||= import("./cocktail/cocktail-motion.js").catch((error) => {
+      drinkModule = null;
+      throw error;
+    });
+    return drinkModule;
   };
 
   /* ---------- Content ---------- */
@@ -69,11 +84,16 @@ export function createProductDetail({ dialog, menu, motion, textMotion, config, 
   }
 
   function heroKind(product) {
+    if (config.features.cocktailExperience && motionFor(product.id)) {
+      return "drink";
+    }
     if (config.features.cocktailExperience && product.experience) {
       return "scene";
     }
     return product.photo ? "photo" : "type";
   }
+
+  const isAnimated = (kind) => kind === "scene" || kind === "drink";
 
   function buildHero(product, kind, locale) {
     hero.replaceChildren();
@@ -90,6 +110,29 @@ export function createProductDetail({ dialog, menu, motion, textMotion, config, 
       return { photo: img };
     }
 
+    if (kind === "drink") {
+      // The photograph first: it is the whole sheet if motion is off or the effect can't load.
+      const drink = document.createElement("img");
+      drink.className = "detail-drink";
+      drink.alt = menu.text(product.name, locale);
+      drink.decoding = "async";
+      hero.append(drink);
+      if (!motion.enabled) {
+        return { drink };
+      }
+      const canvas = document.createElement("canvas");
+      canvas.className = "detail-scene";
+      canvas.setAttribute("aria-hidden", "true");
+      const replay = document.createElement("button");
+      replay.type = "button";
+      replay.className = "detail-replay";
+      replay.id = "detailReplay";
+      replay.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.6-5.9"/><path d="M4 4v4.5h4.5"/></svg><span></span>';
+      replay.querySelector("span").textContent = menu.t(locale).replay;
+      hero.append(canvas, replay);
+      return { drink, canvas };
+    }
+
     if (kind === "scene") {
       const canvas = document.createElement("canvas");
       canvas.className = "detail-scene";
@@ -101,50 +144,83 @@ export function createProductDetail({ dialog, menu, motion, textMotion, config, 
     return {};
   }
 
+  /** once the sheet is on screen and the hero has its size: pick the photo and place it */
+  function placeDrink(product, drink) {
+    const cfg = motionFor(product.id);
+    const { width, height } = hero.getBoundingClientRect();
+    const box = layoutPhoto(cfg, width, height);
+    Object.assign(drink.style, { left: `${box.ix}px`, top: `${box.iy}px`, width: `${box.iw}px`, height: `${box.ih}px` });
+    drink.src = photoSource(cfg, box.ih);
+  }
+
   /* ---------- Scene ---------- */
 
-  async function startScene(product, canvas, { autoplay }) {
-    let module;
+  async function createScene(product, kind, heroParts) {
+    if (kind === "drink") {
+      const module = await loadDrinkMotion();
+      return module.createDrinkScene(heroParts.canvas, heroParts.drink, motionFor(product.id), product);
+    }
+    const module = await loadExperience();
+    const factory = module.EXPERIENCES[product.experience.type];
+    return factory ? factory(heroParts.canvas, product) : null;
+  }
+
+  async function startScene(product, kind, heroParts, { autoplay }) {
+    let scene = null;
     try {
-      module = await loadExperience();
+      scene = await createScene(product, kind, heroParts);
     } catch {
-      surface.dataset.hero = "type"; // couldn't load: the sheet still has everything
-      hero.replaceChildren();
-      return;
+      scene = null;
     }
 
     if (state?.product !== product) {
-      return; // closed or switched while loading
-    }
-
-    const factory = module.EXPERIENCES[product.experience.type];
-    if (!factory) {
-      surface.dataset.hero = "type";
-      hero.replaceChildren();
+      scene?.destroy(); // closed or switched while loading
       return;
     }
 
-    const scene = factory(canvas, product);
+    if (!scene) {
+      // couldn't load: the sheet still has everything (the drinks keep their still photo)
+      if (kind === "drink") {
+        heroParts.canvas.remove();
+        hero.querySelector(".detail-replay")?.remove();
+      } else {
+        surface.dataset.hero = "type";
+        hero.replaceChildren();
+      }
+      return;
+    }
+
     state.scene = scene;
 
+    // The first callback only reports the size already drawn: rebuilding then (mid-scene) cost a
+    // second full setup right while the ice was falling.
     const resize = new ResizeObserver(() => {
-      scene.resize();
-      if (!motion.isRunning("scene")) {
+      if (scene.resize() && !motion.isRunning("scene")) {
         scene.draw(scene.duration);
       }
     });
-    resize.observe(canvas);
+    resize.observe(heroParts.canvas);
     state.cleanup = () => resize.disconnect();
 
     if (autoplay && motion.enabled) {
-      playScene(scene, { delay: 0.18, withText: true });
+      // The clock starts once the sheet has opened and the first frame is on screen: building the
+      // layers and the canvas' first GPU frame can block a phone for half a second, and that used
+      // to happen inside the fall, so the ice appeared already in the glass.
+      const opened = (performance.now() - state.openedAt) / 1000;
+      playScene(scene, { delay: Math.max(0.12, DURATION.open + 0.06 - opened), withText: true, after: painted() });
     } else {
       scene.draw(scene.duration);
     }
   }
 
-  function playScene(scene, { delay = 0, withText = false } = {}) {
-    const timeline = motion.timeline("scene", { delay });
+  const painted = () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+  /**
+   * The drink keeps its own clock, driven frame by frame and never advancing more than MAX_STEP
+   * per frame: a slow frame slows the drink down for an instant instead of skipping the fall.
+   */
+  function playScene(scene, { delay = 0, withText = false, after = null } = {}) {
+    const timeline = motion.timeline("scene", { paused: true });
     if (!timeline) {
       scene.draw(scene.duration);
       return;
@@ -159,6 +235,26 @@ export function createProductDetail({ dialog, menu, motion, textMotion, config, 
       textMotion.sequence([priceEl, descriptionEl], { timeline, at: scene.markers.impact - 0.15, stagger: 0.06, distance: 8 });
       textMotion.sequence([...ingredientsEl.children], { timeline, at: scene.markers.impact + 0.12, stagger: 0.08, distance: 6 });
     }
+
+    const { ticker } = motion.gsap;
+    let elapsed = -delay;
+    const tick = (time, deltaTime) => {
+      if (motion.current("scene") !== timeline) {
+        ticker.remove(tick); // finished, closed or replaced
+        return;
+      }
+      elapsed += Math.min(deltaTime / 1000, MAX_STEP);
+      timeline.time(Math.min(Math.max(elapsed, 0), timeline.duration()));
+      if (elapsed >= timeline.duration()) {
+        ticker.remove(tick);
+        motion.finish("scene");
+      }
+    };
+    Promise.resolve(after).then(() => {
+      if (motion.current("scene") === timeline) {
+        ticker.add(tick);
+      }
+    });
   }
 
   // Tapping the drink pours it again.
@@ -174,7 +270,7 @@ export function createProductDetail({ dialog, menu, motion, textMotion, config, 
     const kind = surface.dataset.hero;
     const restForScene = [metaEl, ...dialog.querySelectorAll(".detail-section h3"), allergensEl, dialog.querySelector(".detail-bar")];
     const restDefault = [dialog.querySelector(".detail-bar"), hero, priceEl, descriptionEl, ...dialog.querySelectorAll(".detail-section"), metaEl];
-    const scenePlaysText = kind === "scene" && motion.enabled;
+    const scenePlaysText = isAnimated(kind) && motion.enabled;
 
     return {
       source,
@@ -209,7 +305,7 @@ export function createProductDetail({ dialog, menu, motion, textMotion, config, 
     const heroParts = buildHero(product, kind, locale);
 
     const wasOpen = dialog.open;
-    state = { product, source, scene: null, cleanup: null };
+    state = { product, source, scene: null, cleanup: null, openedAt: performance.now() };
 
     if (!wasOpen) {
       if (typeof dialog.showModal === "function") {
@@ -220,14 +316,17 @@ export function createProductDetail({ dialog, menu, motion, textMotion, config, 
     }
     surface.scrollTop = 0;
     dialog.querySelector("[data-close]").focus({ preventScroll: true });
+    if (heroParts.drink) {
+      placeDrink(product, heroParts.drink);
+    }
 
     const parts = partsFor(product, source, heroParts);
     if (!wasOpen) {
       transition.open(parts, motion.timeline("detail"));
     }
 
-    if (kind === "scene") {
-      startScene(product, heroParts.canvas, { autoplay: parts.scenePlaysText });
+    if (heroParts.canvas) {
+      startScene(product, kind, heroParts, { autoplay: parts.scenePlaysText });
     }
   }
 
@@ -296,6 +395,14 @@ export function createProductDetail({ dialog, menu, motion, textMotion, config, 
     },
     get current() {
       return state?.product.id || null;
+    },
+    /** for review and tests: the scene on screen (draw(t) renders any instant) */
+    get scene() {
+      return state?.scene || null;
+    },
+    /** fetch the scene code ahead of time (idle), so the first sheet doesn't wait for it */
+    prepare() {
+      loadExperience().catch(() => {});
     },
   };
 }

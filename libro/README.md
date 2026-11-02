@@ -1,8 +1,10 @@
 # Modo editorial «libro» · Caribbean's Avenue
 
-Experiencia alternativa de la carta: un libro que se hojea, fichas editoriales que se abren desde
-cada cóctel y una microescena de hielo en los cócteles que se sirven con hielo. La carta clásica
-(`/index.html`) sigue siendo la principal y no se ha modificado.
+Modo principal de la carta (la raíz redirige aquí): un libro que se hojea, fichas editoriales que
+se abren desde cada cóctel y, en la ficha, una microanimación: los cuatro cócteles de autor cobran
+vida sobre su propia fotografía (CocktailMotion) y los demás que llevan hielo tienen la escena
+dibujada. La carta clásica (`/clasica.html`) ya no se enlaza desde el libro; solo queda como
+salida de emergencia si el libro no carga y para quien no tenga JavaScript.
 
 ## Ver en local
 
@@ -56,8 +58,51 @@ Sin framework ni build: módulos ES nativos, igual que el resto del proyecto.
 | ProductDetail | `js/product-detail.js` | Ficha editorial (`<dialog>` accesible), política de reproducción de la escena, carga diferida del motor de cócteles. |
 | SharedImageTransition | `js/shared-transition.js` | La fila (o su foto) crece hasta la ficha con `clip-path` y FLIP; el nombre viaja y se enfoca. Cierre inverso o alternativa si el origen ya no existe. |
 | TextMotion | `js/text-motion.js` | Revelado por palabras, enfoque desde desenfoque ligero, secuencias. Una vez por sesión. |
+| CocktailMotion | `js/cocktail/motion-config.js`, `js/cocktail/cocktail-motion.js` | Los cuatro cócteles de autor sobre su foto real (ver abajo). La configuración (ligera) dice qué bebida, qué efecto y con qué números; el motor y las fotos se cargan solo al abrir uno de ellos. |
 | CocktailExperience | `js/cocktail/experience.js` | Escena Canvas 2D de hielo (vaso, líquido, hielo, salpicadura, ondas, burbujas, condensación). Se carga con `import()` solo al abrir un cóctel que la usa. |
 | MotionController | `js/motion.js` | Movimiento reducido, intensidad, un canal por animación (nunca dos timelines sobre el mismo elemento), cierre limpio. |
+
+### CocktailMotion · los cuatro cócteles de autor
+
+Por id real de producto (`motion-config.js`): `caribbeans-spritz`, `porn-star-martini`,
+`mojito-frutas` (la foto «Mojito Fresa») y `mojito-clasico`. Cada uno declara su efecto, duración,
+intensidades, recursos y coordenadas (medidas sobre la foto, en % de la foto) sin duplicar código.
+
+- **Spritz · hielo y destello (1,3 s):** un cubito claro entra en diagonal por la boca de la copa,
+  por detrás del borde delantero y del reflejo largo del cristal (sus brillos se redibujan encima);
+  a través del cubo se ve la propia foto invertida (refracción). Rompe el menisco: corona de gotas
+  del color de la bebida, ondas que se apagan y la parte sumergida teñida y desplazada por la
+  refracción; se hunde entre los hielos, suben burbujas y el cristal capta una franja de luz.
+- **Porn Star · gota dorada (1,15 s):** sin hielo. Una gota de la bebida (lente con brillo y
+  cáustica) cae en la espuma: hoyuelo, oleaje suave (la espuma amortigua: nada de anillos marcados),
+  motas de espuma y un reflejo dorado que cruza el líquido.
+- **Mojitos · hielo picado (1,45 / 1,4 s):** cae un trozo real del montículo de la foto, rebota,
+  el montículo cede y se asienta, y el trozo se funde con él. Gotitas, burbujas entre el hielo y
+  hojas de hierbabuena que se mueven 1–2 px (máscara ovalada, sin recortes). En el clásico, una gota
+  de condensación resbala por fuera del vaso. Las fresas no se mueven.
+
+Técnica: Canvas 2D a 2× como máximo. Las ondas y el asentamiento desplazan los píxeles de la foto
+uno a uno (solo donde hay líquido o hielo, con iluminación de cada cresta); las gotas y burbujas
+toman el color de la bebida; ≤ 30 partículas. Sin WebGL, sin física, sin vídeo. La escena es una
+función del tiempo y el último fotograma es la foto intacta, así que no hay saltos al terminar ni
+al repetir. Sin movimiento (o si algo falla) queda la foto quieta. «Ver de nuevo» y tocar la
+bebida la repiten.
+
+Recursos (`assets/cocktails/`): fotos recortadas a la bebida en WebP con transparencia, 720 px de
+alto (46–97 KB) y 1200 px solo para pantallas que lo necesitan; dos trozos reales de hielo picado
+recortados de las fotos de los mojitos y vueltos translúcidos (6–10 KB) y un cubito claro para el
+Spritz (6 KB; el hielo picado es escarcha, no sirve para un spritz). Origen: `Caribbeans_Avenue_12_Cocteles_PNG (3)`
+de Descargas (la versión `_HD_SinFondo` es un reescalado con halo de motas). Al abrir uno de los
+cuatro se descargan ~100–150 KB; nada al abrir la carta.
+
+### El reloj de las escenas
+
+Antes, en un móvil medio, preparar las capas y el primer fotograma del lienzo en la GPU bloqueaba
+0,5–1,7 s justo durante la caída, y el hielo «aparecía» ya en el vaso (0–3 fotogramas de caída).
+Ahora la escena se prepara antes, el reloj arranca cuando la ficha ya está abierta y pintada, y
+avanza fotograma a fotograma con un paso máximo de 0,05 s: un fotograma lento frena la bebida un
+instante en vez de saltarse la caída (17–20 fotogramas de caída con la CPU 4× más lenta). El código
+de la escena se descarga en reposo mientras se ve la portada.
 
 ### El gesto de pasar página
 
@@ -106,7 +151,7 @@ del cóctel. La escena de hielo está dibujada por código.
 
 ## Pruebas (`tests/index.html`)
 
-30 pruebas de riesgo con Pointer Events reales en un iframe de móvil: arrastre lento que pasa y
+34 pruebas de riesgo (incluida una para los cuatro cócteles de autor: foto, animación, «Ver de nuevo» y vuelta a la misma página) con Pointer Events reales en un iframe de móvil: arrastre lento que pasa y
 que se cancela, umbral 26 % / 34 %, rápido-y-vuelta, lento-y-acelerar, rápido-y-frenar, página
 anterior, cambio de dirección, segundo dedo, `pointercancel`, ratón, tocar cóctel sin pasar
 página (con foco devuelto), arrastrar empezando sobre un cóctel, límites del libro, botones y
@@ -128,8 +173,9 @@ Verificado en Chrome (escritorio y emulación móvil 375/390 px, tablet apaisada
   documentados en el registro `EXPERIENCES`, sin implementar a propósito.
 - **Sin conexión:** el modo libro no se guarda para uso offline (el service worker lo excluye
   mientras evoluciona).
-- **Publicación:** nada se ha subido. `/libro/` quedaría accesible en GitHub Pages solo si se hace
-  push; no está enlazado desde la carta clásica.
+- **CocktailMotion:** el cubito del Spritz es una construcción (silueta, bordes, brillos) con las
+  fracturas del hielo real de la foto; a tamaño de móvil se lee como hielo, pero de cerca es menos
+  rico que una foto. Las ondas son sutiles a propósito. Sin revisar en Safari iOS real.
 
 ## Decisiones de diseño
 

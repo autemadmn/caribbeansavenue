@@ -802,8 +802,14 @@ export function createIceScene(canvas, product) {
     duration: SCENE_DURATION,
     markers: MARKERS,
     draw,
+    /** true when the canvas really changed size (the next frame then rebuilds the layers) */
     resize() {
+      const rect = canvas.getBoundingClientRect();
+      if (geometry && Math.round(rect.width) === Math.round(width) && Math.round(rect.height) === Math.round(height)) {
+        return false;
+      }
       geometry = null;
+      return true;
     },
     destroy() {
       backdrop = null;
