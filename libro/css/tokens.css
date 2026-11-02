@@ -54,3 +54,11 @@
   --ed-stage-gap: 0.5rem;
   --ed-tap: 2.75rem;             /* minimum touch target */
 }
+
+:root {
+  /* Night pages */
+  --ed-night: #0d0b09;
+  --ed-gold: #d7ac67;
+  --ed-cream: #f3ece0;
+  --ed-cream-soft: rgba(243, 236, 224, 0.78);
+}

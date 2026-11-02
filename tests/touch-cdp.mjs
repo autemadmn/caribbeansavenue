@@ -100,7 +100,7 @@ const p3 = await page();
 await swipe([[200, 300], [205, 420, 400]]); // vertical: nothing
 check("arrastre vertical no pasa página", (await page()) === p3);
 
-await doubleTap(200, 400);
+await doubleTap(340, 300); // over the photo, away from the drinks
 const zoom = await evaluate("window.visualViewport.scale");
 check("doble toque no amplía", zoom === 1, `escala ${zoom}`);
 

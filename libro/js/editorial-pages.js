@@ -10,8 +10,11 @@ const STAR = '<svg class="mark-star" viewBox="0 0 24 24" aria-hidden="true"><pat
 const PALM =
   '<svg class="palm" viewBox="0 0 120 120" aria-hidden="true"><g><path d="M60 92V52"/><path d="M60 55C47 58 41 67 38 76"/><path d="M60 55C73 58 79 67 82 76"/><path d="M60 53C52 46 45 44 37 45"/><path d="M60 53C68 46 75 44 83 45"/><path d="M60 52C57 42 59 35 63 28"/></g></svg>';
 
+const pad = (number) => String(number).padStart(2, "0");
+
+/** Running foot: name — rule — page number, like a printed menu. */
 function folio(menu, locale, pageIndex) {
-  return `<footer class="folio-foot"><span>${escape(menu.restaurant.name)}</span><span class="folio-num">${pageIndex + 1}</span></footer>`;
+  return `<footer class="folio-foot"><span class="folio-name">${escape(menu.restaurant.name)}</span><span class="folio-line" aria-hidden="true"></span><span class="folio-num">${pad(pageIndex + 1)}</span></footer>`;
 }
 
 function coverPage(menu, locale) {
@@ -22,6 +25,7 @@ function coverPage(menu, locale) {
     <div class="cover-text">
       <h1 class="cover-title"><img class="cover-logo" src="../assets/brand/caribbeans-logo-white.svg" alt="${escape(menu.restaurant.name)}" width="1042" height="278"></h1>
       <p class="cover-sub">${escape(menu.text(menu.restaurant.title, locale))}</p>
+      <span class="gold-rule" aria-hidden="true"></span>
       <p class="cover-tagline">${escape(menu.text(menu.restaurant.tagline, locale))}</p>
     </div>
     <p class="cover-hint"><span>${escape(t.openHint)}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></p>`;
@@ -36,7 +40,7 @@ function contentsPage(menu, locale, pageIndex) {
         <button class="contents-entry" type="button" data-goto="${category.page}" aria-label="${escape(t.goToPage(menu.text(category.title, locale), category.page + 1))}">
           <span class="contents-name">${escape(menu.text(category.title, locale))}</span>
           <span class="contents-sub">${escape(menu.text(category.subtitle, locale))}</span>
-          <span class="contents-page">${category.page + 1}</span>
+          <span class="contents-page">${pad(category.page + 1)}</span>
         </button>
       </li>`,
     )
@@ -64,46 +68,49 @@ function contentsPage(menu, locale, pageIndex) {
     : "";
 
   return `
+    <div class="page-glow" aria-hidden="true"></div>
     <div class="page-body">
-      <h2 class="contents-title" data-reveal="heading">${escape(t.contents)}</h2>
+      <header class="cat-head">
+        <h2 class="cat-title" data-reveal="heading">${escape(t.contents)}</h2>
+      </header>
+      <span class="gold-rule" aria-hidden="true"></span>
       <ol class="contents-list">${entries}</ol>
       ${top}
     </div>
     ${folio(menu, locale, pageIndex)}`;
 }
 
-function categoryPage(menu, locale, category, order) {
+function categoryPage(menu, locale, category) {
   const t = menu.t(locale);
   const photo = category.photo
-    ? `<figure class="cat-photo ${order % 2 ? "cat-photo--right" : "cat-photo--left"}">
-        <img data-src="${escape(category.photo.src)}" data-srcset="${escape(category.photo.srcset)}" sizes="(min-width: 900px) 40vw, 85vw" alt="${escape(menu.text(category.photo.alt, locale))}" decoding="async">
-      </figure>`
+    ? `<div class="page-photo"><img data-src="${escape(category.photo.src)}" data-srcset="${escape(category.photo.srcset)}" sizes="(min-width: 900px) 50vw, 100vw" alt="" decoding="async"></div>`
     : "";
 
   const dishes = category.products
-    .map((product) => {
-      const name = menu.text(product.name, locale);
-      return `
+    .map(
+      (product) => `
       <li>
         <button class="dish" type="button" data-product="${escape(product.id)}">
           <span class="dish-line">
-            <span class="dish-name">${escape(name)}</span>
+            <span class="dish-name">${escape(menu.text(product.name, locale))}</span>
             <span class="dish-price">${escape(menu.price(product.price, locale))}</span>
           </span>
           <span class="dish-desc">${escape(menu.text(product.description, locale))}</span>
           ${product.top ? `<span class="dish-mark">${STAR}${escape(t.topSellers)}</span>` : ""}
         </button>
-      </li>`;
-    })
+      </li>`,
+    )
     .join("");
 
   return `
     ${photo}
+    <div class="page-shade"></div>
     <div class="page-body">
       <header class="cat-head">
         <h2 class="cat-title" data-reveal="heading">${escape(menu.text(category.title, locale))}</h2>
         <p class="cat-sub">${escape(menu.text(category.subtitle, locale))}</p>
       </header>
+      <span class="gold-rule" aria-hidden="true"></span>
       <ul class="cat-list" data-count="${category.products.length}">${dishes}</ul>
     </div>
     ${folio(menu, locale, category.page)}`;
@@ -126,11 +133,11 @@ function pageDefinitions(menu) {
   return [
     { kind: "cover", density: "hard", render: (locale) => coverPage(menu, locale), label: (t) => t.cover },
     { kind: "contents", density: "soft", render: (locale) => contentsPage(menu, locale, 1), label: (t) => t.contents },
-    ...menu.categories.map((category, order) => ({
+    ...menu.categories.map((category) => ({
       kind: "category",
       density: "soft",
       category,
-      render: (locale) => categoryPage(menu, locale, category, order),
+      render: (locale) => categoryPage(menu, locale, category),
       label: (_t, locale) => menu.text(category.title, locale),
     })),
     { kind: "back", density: "hard", render: (locale) => backPage(menu, locale), label: (t) => t.backCover },
@@ -141,7 +148,7 @@ export function createPages(menu) {
   const definitions = pageDefinitions(menu);
   const elements = definitions.map((definition, index) => {
     const element = document.createElement("div");
-    element.className = `page page--${definition.kind}${definition.density === "soft" ? " page--paper" : ""}`;
+    element.className = `page page--${definition.kind}`;
     element.dataset.density = definition.density;
     element.dataset.page = String(index);
     if (definition.category) {

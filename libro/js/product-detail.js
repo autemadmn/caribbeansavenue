@@ -1,28 +1,10 @@
 // ProductDetail · the editorial product sheet, opened from any product in the book.
 // - The book underneath is never touched, so closing returns to the exact same page.
 // - Content is written before any animation starts: if motion is off or fails, it is all there.
-// - Cocktails with an `experience` get the microscene; it plays by itself the first time a product
-//   is opened in a session, after that it shows its final frame and offers "Ver de nuevo".
+// - Cocktails with an `experience` get the microscene: it plays every time the sheet opens, and
+//   again whenever the drink itself is tapped.
 
 import { createSharedTransition } from "./shared-transition.js";
-
-const SEEN_KEY = "ed-scene-seen:";
-
-function sessionGet(key) {
-  try {
-    return sessionStorage.getItem(key);
-  } catch {
-    return null;
-  }
-}
-
-function sessionSet(key) {
-  try {
-    sessionStorage.setItem(key, "1");
-  } catch {
-    // private mode: the scene will simply autoplay again
-  }
-}
 
 export function createProductDetail({ dialog, menu, motion, textMotion, config, getLocale, backdrop, onFallbackFocus }) {
   const surface = dialog.querySelector("#detailSurface");
@@ -33,7 +15,6 @@ export function createProductDetail({ dialog, menu, motion, textMotion, config, 
   const ingredientsEl = dialog.querySelector("#detailIngredients");
   const allergensEl = dialog.querySelector("#detailAllergens");
   const metaEl = dialog.querySelector("#detailMeta");
-  const replayButton = dialog.querySelector("#detailReplay");
   const transition = createSharedTransition(motion);
 
   let state = null; // { product, source, scene, closing }
@@ -145,7 +126,6 @@ export function createProductDetail({ dialog, menu, motion, textMotion, config, 
 
     const scene = factory(canvas, product);
     state.scene = scene;
-    replayButton.hidden = !motion.enabled; // nothing to replay when motion is reduced
 
     const resize = new ResizeObserver(() => {
       scene.resize();
@@ -157,7 +137,6 @@ export function createProductDetail({ dialog, menu, motion, textMotion, config, 
     state.cleanup = () => resize.disconnect();
 
     if (autoplay && motion.enabled) {
-      sessionSet(SEEN_KEY + product.id);
       playScene(scene, { delay: 0.18, withText: true });
     } else {
       scene.draw(scene.duration);
@@ -182,8 +161,9 @@ export function createProductDetail({ dialog, menu, motion, textMotion, config, 
     }
   }
 
-  replayButton.addEventListener("click", () => {
-    if (state?.scene) {
+  // Tapping the drink pours it again.
+  hero.addEventListener("click", () => {
+    if (state?.scene && !state.closing) {
       playScene(state.scene);
     }
   });
@@ -192,9 +172,9 @@ export function createProductDetail({ dialog, menu, motion, textMotion, config, 
 
   function partsFor(product, source, heroParts) {
     const kind = surface.dataset.hero;
-    const restForScene = [metaEl, replayButton, ...dialog.querySelectorAll(".detail-section h3"), allergensEl, dialog.querySelector(".detail-bar")];
+    const restForScene = [metaEl, ...dialog.querySelectorAll(".detail-section h3"), allergensEl, dialog.querySelector(".detail-bar")];
     const restDefault = [dialog.querySelector(".detail-bar"), hero, priceEl, descriptionEl, ...dialog.querySelectorAll(".detail-section"), metaEl];
-    const scenePlaysText = kind === "scene" && !sessionGet(SEEN_KEY + product.id) && motion.enabled;
+    const scenePlaysText = kind === "scene" && motion.enabled;
 
     return {
       source,
@@ -227,7 +207,6 @@ export function createProductDetail({ dialog, menu, motion, textMotion, config, 
     fill(product, locale);
     const kind = heroKind(product);
     const heroParts = buildHero(product, kind, locale);
-    replayButton.hidden = true;
 
     const wasOpen = dialog.open;
     state = { product, source, scene: null, cleanup: null };
@@ -289,7 +268,7 @@ export function createProductDetail({ dialog, menu, motion, textMotion, config, 
     motion.finish("detail");
 
     const parts = partsFor(product, source, {});
-    parts.rest = [hero, priceEl, descriptionEl, ...dialog.querySelectorAll(".detail-section"), metaEl, replayButton].filter(
+    parts.rest = [hero, priceEl, descriptionEl, ...dialog.querySelectorAll(".detail-section"), metaEl].filter(
       (element) => !element.hidden && element.getClientRects().length > 0,
     );
     const timeline = motion.timeline("detail", { onComplete: () => finishClose(source) });

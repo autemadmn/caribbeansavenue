@@ -27,3 +27,11 @@
   --ed-accent: #7a5a24;
   --ed-accent-bright: #d7ac67;
 }
+
+/* Night pages (the classic menu's world) */
+:root {
+  --ed-night: #0b0907;
+  --ed-gold: #e0b46e;
+  --ed-cream: #f2ece2;
+  --ed-cream-soft: rgba(242, 236, 226, 0.78);
+}

@@ -409,12 +409,12 @@ export function createBookEngine({ stage, pages, config, motion, onChange }) {
     }
   }
 
-  function goTo(index) {
+  function goTo(index, { instant = false } = {}) {
     if (!pageFlip) {
       return;
     }
     const target = clamp(index, 0, pageCount - 1);
-    if (motion.reduced || !isIdle()) {
+    if (instant || motion.reduced || !isIdle()) {
       pageFlip.turnToPage(target);
       current = pageFlip.getCurrentPageIndex();
       onChange?.(current);

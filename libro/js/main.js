@@ -166,9 +166,10 @@ document.querySelectorAll("[data-locale]").forEach((button) => {
 
 /* ---------- First open ---------- */
 
-const restorePage = Number(storage.get("ed-page", sessionStorage));
+// review hooks: ?page=<index> opens a page, ?product=<id> opens a product sheet
+const restorePage = Number(params.get("page") ?? storage.get("ed-page", sessionStorage));
 if (book && restorePage > 0 && restorePage < book.count) {
-  book.goTo(restorePage);
+  book.goTo(restorePage, { instant: true });
 }
 onPageChange(book?.current ?? 0);
 
@@ -209,6 +210,11 @@ if (intro?.active) {
     .then(() => intro.ready());
 } else if (firstVisit) {
   welcomeCover();
+}
+
+if (params.get("product")) {
+  const id = params.get("product");
+  window.setTimeout(() => detail.open(id, document.querySelector(`.dish[data-product="${CSS.escape(id)}"]`)), 400);
 }
 
 // Read-only handle for tests/index.html.

@@ -403,25 +403,41 @@ test("Producto con foto (datos de prueba): la foto viaja a la ficha", async () =
   expect(photo.getBoundingClientRect().width > 300, "la foto no ocupa la cabecera");
 });
 
-test("Cóctel: la escena se reproduce una vez y deja ingredientes visibles", async () => {
+test("Cóctel: la escena se reproduce al abrir, al reabrir y al tocar la bebida", async () => {
   await load();
   await goTo(3);
   await tap(doc.querySelector('.dish[data-product="mojito-clasico"]'));
-  await wait(450);
+  await until(() => lib.motion.isRunning("scene"), 2000);
   expect(lib.motion.isRunning("scene"), "la escena no arrancó");
-  await wait(1700);
-  expect(!lib.motion.isRunning("scene"), "la escena no terminó");
+  await until(() => !lib.motion.isRunning("scene"), 4000);
   const items = [...doc.querySelectorAll("#detailIngredients li")];
   expect(items.length === 5 && items.every(visible), "ingredientes no visibles");
-  expect(!doc.querySelector("#detailReplay").hidden, "falta ‘Ver de nuevo’");
+  expect(!doc.querySelector("#detailReplay"), "no debe haber botón ‘Ver de nuevo’");
+  doc.querySelector("#detailHero").click();
+  await wait(100);
+  expect(lib.motion.isRunning("scene"), "tocar la bebida no la repite");
   doc.querySelector("#detail [data-close]").click();
   await until(() => !lib.detail.isOpen);
   await tap(doc.querySelector('.dish[data-product="mojito-clasico"]'));
-  await wait(500);
-  expect(!lib.motion.isRunning("scene"), "no debería repetirse sola");
-  doc.querySelector("#detailReplay").click();
-  await wait(100);
-  expect(lib.motion.isRunning("scene"), "‘Ver de nuevo’ no la reproduce");
+  await until(() => lib.motion.isRunning("scene"), 2000);
+  expect(lib.motion.isRunning("scene"), "al reabrir no se repite");
+});
+
+test("La ficha cabe en la pantalla sin scroll (390×844 y 375×667)", async () => {
+  for (const [width, height] of [[390, 844], [375, 667]]) {
+    await load("", { width, height });
+    await goTo(3);
+    for (const id of ["mojito-frutas", "caipirinha"]) {
+      await tap(doc.querySelector(`.dish[data-product="${id}"]`));
+      await until(() => !lib.motion.isRunning("detail"), 3000);
+      const surface = doc.querySelector("#detailSurface");
+      const meta = doc.querySelector("#detailMeta").getBoundingClientRect();
+      expect(surface.scrollHeight <= surface.clientHeight + 1, `${width}×${height} ${id}: hay scroll (${surface.scrollHeight} > ${surface.clientHeight})`);
+      expect(meta.bottom <= height, `${width}×${height} ${id}: el pie de la ficha se sale (${Math.round(meta.bottom)} > ${height})`);
+      doc.querySelector("#detail [data-close]").click();
+      await until(() => !lib.detail.isOpen);
+    }
+  }
 });
 
 test("Cóctel: cerrar a mitad de la escena no deja nada oculto", async () => {
@@ -433,8 +449,8 @@ test("Cóctel: cerrar a mitad de la escena no deja nada oculto", async () => {
   await until(() => !lib.detail.isOpen);
   expect(!lib.detail.isOpen, "no se cerró");
   await tap(doc.querySelector('.dish[data-product="caipirinha"]'));
-  // the reopening transition may still be fading things in; what matters is where it ends
-  await until(() => !lib.motion.isRunning("detail"), 3000);
+  // the reopening plays the scene again; what matters is where it ends
+  await until(() => !lib.motion.isRunning("detail") && !lib.motion.isRunning("scene"), 5000);
   const items = [...doc.querySelectorAll("#detailIngredients li")];
   expect(items.every(visible), "ingredientes ocultos tras interrumpir");
   expect(visible(doc.querySelector("#detailPrice")), "precio oculto");
