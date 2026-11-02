@@ -21,7 +21,6 @@ const UI_STRINGS = {
     openHint: "Desliza la página para abrir",
     allergensUnknown: "Aún no tenemos el detalle de alérgenos de este cóctel. Pregunta a nuestro personal antes de pedir.",
     inMenu: (category, page) => `${category} · página ${page}`,
-    thanks: "Gracias por su visita",
     goToPage: (title, page) => `${title}, página ${page}`,
   },
   en: {
@@ -42,7 +41,6 @@ const UI_STRINGS = {
     openHint: "Swipe the page to open",
     allergensUnknown: "We don't have the allergen details for this cocktail yet. Please ask our staff before ordering.",
     inMenu: (category, page) => `${category} · page ${page}`,
-    thanks: "Thank you for visiting",
     goToPage: (title, page) => `${title}, page ${page}`,
   },
 };

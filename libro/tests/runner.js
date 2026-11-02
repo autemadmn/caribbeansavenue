@@ -97,6 +97,7 @@ function fire(kind, at, { id = 1, type = "touch", primary = true } = {}) {
 async function drag(path, { type = "touch", end = "up", clickAfter = true, beforeEnd } = {}) {
   let [fx, fy] = path[0];
   const downTarget = fire("pointerdown", point(fx, fy), { type });
+  let lostSent = false;
   for (const [tx, ty, ms] of path.slice(1)) {
     const steps = Math.max(1, Math.round(ms / 16));
     const sx = fx;
@@ -104,6 +105,11 @@ async function drag(path, { type = "touch", end = "up", clickAfter = true, befor
     for (let i = 1; i <= steps; i += 1) {
       await wait(16);
       fire("pointermove", point(sx + ((tx - sx) * i) / steps, sy + ((ty - sy) * i) / steps), { type });
+      // Like a real touch: once the stage takes the capture, the element under the finger loses it.
+      if (type === "touch" && !lostSent && doc.querySelector("#stage").classList.contains("is-dragging")) {
+        lostSent = true;
+        downTarget.dispatchEvent(new win.PointerEvent("lostpointercapture", { bubbles: true, pointerId: 1, pointerType: type }));
+      }
     }
     fx = tx;
     fy = ty;
@@ -228,6 +234,23 @@ test("Contacto cancelado por el sistema: la hoja vuelve", async () => {
   await goTo(1);
   await drag([[0.94, 0.5], [0.4, 0.5, 400]], { end: "cancel" });
   expect(lib.book.current === 1, `página ${lib.book.current}`);
+});
+
+test("Táctil real: el elemento tocado pierde la captura y el gesto sigue", async () => {
+  await load();
+  await goTo(1);
+  await drag([[0.94, 0.5], [0.8, 0.5, 150], [0.45, 0.5, 400]], {
+    beforeEnd: async () => {},
+    onMove: true,
+  });
+  expect(lib.book.current === 2, `página ${lib.book.current}`);
+});
+
+test("Gesto rápido corto (flick 15 % en 90 ms) pasa la página", async () => {
+  await load();
+  await goTo(1);
+  await drag([[0.94, 0.5], [0.79, 0.5, 90]]);
+  expect(lib.book.current === 2, `página ${lib.book.current} (${JSON.stringify(lib.book.debug.lastGesture)})`);
 });
 
 test("Arrastre con ratón", async () => {

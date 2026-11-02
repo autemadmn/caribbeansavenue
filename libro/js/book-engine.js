@@ -208,6 +208,9 @@ export function createBookEngine({ stage, pages, config, motion, onChange }) {
     const { rect, direction, flipDirection, startX, travel, cornerY } = gesture;
     const distance = direction === "next" ? gesture.x0 - event.clientX : event.clientX - gesture.x0;
     gesture.distance = distance;
+    const now = performance.now();
+    gesture.samples = (gesture.samples || []).filter((sample) => now - sample.t < 120);
+    gesture.samples.push({ d: distance, t: now });
 
     // The sheet tracks the finger 1:1; going back past the start simply lays it flat again.
     const visual = clamp(distance, 0, travel - 2);
@@ -267,8 +270,14 @@ export function createBookEngine({ stage, pages, config, motion, onChange }) {
     suppressClicksUntil = performance.now() + 400;
     const calc = flipController().getCalculation();
     const progress = active.distance / active.travel;
-    const commit = commitAllowed && progress >= settings.threshold;
-    lastGesture = { direction: active.direction, progress, commit, blocked: !calc };
+    // A short, decided flick towards the turn also turns the page (velocity at release, not at start).
+    const samples = active.samples || [];
+    const first = samples[0];
+    const last = samples[samples.length - 1];
+    const velocity = first && last && last.t > first.t ? (last.d - first.d) / (last.t - first.t) : 0;
+    const flick = velocity > 0.3 && active.distance > 24;
+    const commit = commitAllowed && (progress >= settings.threshold || flick);
+    lastGesture = { direction: active.direction, progress, velocity, flick, commit, blocked: !calc };
 
     if (!calc) {
       return; // first/last page: there was nothing to turn
@@ -296,6 +305,15 @@ export function createBookEngine({ stage, pages, config, motion, onChange }) {
   function onPointerCancel(event) {
     if (gesture && event.pointerId === gesture.id) {
       cancelGesture();
+    }
+  }
+
+  // On touch the browser first captures the pointer to the element under the finger; moving the
+  // capture to the stage fires lostpointercapture on that element, and it bubbles up here. Only a
+  // capture lost by the stage itself means the gesture was really taken away.
+  function onLostCapture(event) {
+    if (event.target === stage) {
+      onPointerCancel(event);
     }
   }
 
@@ -377,7 +395,7 @@ export function createBookEngine({ stage, pages, config, motion, onChange }) {
   stage.addEventListener("pointermove", onPointerMove);
   stage.addEventListener("pointerup", onPointerUp);
   stage.addEventListener("pointercancel", onPointerCancel);
-  stage.addEventListener("lostpointercapture", onPointerCancel);
+  stage.addEventListener("lostpointercapture", onLostCapture);
   stage.addEventListener("click", onClickCapture, true);
   // The stage, not just the window: it also changes when fonts, chrome or toolbars settle.
   const stageObserver = new ResizeObserver(onResize);
@@ -407,7 +425,7 @@ export function createBookEngine({ stage, pages, config, motion, onChange }) {
       stage.removeEventListener("pointermove", onPointerMove);
       stage.removeEventListener("pointerup", onPointerUp);
       stage.removeEventListener("pointercancel", onPointerCancel);
-      stage.removeEventListener("lostpointercapture", onPointerCancel);
+      stage.removeEventListener("lostpointercapture", onLostCapture);
       stage.removeEventListener("click", onClickCapture, true);
       stageObserver.disconnect();
       window.removeEventListener("resize", onResize);

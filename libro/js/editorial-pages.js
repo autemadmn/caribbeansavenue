@@ -114,7 +114,6 @@ function backPage(menu, locale) {
   return `
     <div class="back-body">
       ${PALM}
-      <p class="back-thanks">${escape(t.thanks)}</p>
       <ul class="back-notes">
         ${menu.notes.map((note) => `<li>${escape(menu.text(note, locale))}</li>`).join("")}
       </ul>
