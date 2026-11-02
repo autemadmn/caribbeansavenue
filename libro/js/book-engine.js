@@ -153,12 +153,64 @@ export function createBookEngine({ stage, pages, config, motion, onChange }) {
     };
   }
 
+  /* ---------- Pinch: zoom under the fingers, spring back on release ---------- */
+
+  const pointers = new Map();
+  let pinch = null;
+
+  const spread = () => {
+    const [a, b] = [...pointers.values()];
+    return { distance: Math.hypot(b.x - a.x, b.y - a.y), x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+  };
+
+  function startPinch() {
+    cancelGesture();
+    const rect = stage.getBoundingClientRect();
+    const start = spread();
+    pinch = { start, originX: start.x - rect.left, originY: start.y - rect.top };
+    stage.classList.add("is-pinching");
+    stage.style.transition = "none";
+    stage.style.transformOrigin = `${pinch.originX}px ${pinch.originY}px`;
+  }
+
+  function updatePinch() {
+    const now = spread();
+    const scale = clamp(now.distance / Math.max(pinch.start.distance, 1), 1, 3);
+    stage.style.transform = `translate(${now.x - pinch.start.x}px, ${now.y - pinch.start.y}px) scale(${scale})`;
+  }
+
+  function endPinch() {
+    pinch = null;
+    suppressClicksUntil = performance.now() + 400;
+    stage.style.transition = motion.reduced ? "none" : "transform 280ms cubic-bezier(0.215, 0.61, 0.355, 1)";
+    stage.style.transform = "";
+    const clear = () => {
+      if (!pinch) {
+        stage.classList.remove("is-pinching");
+        stage.style.transition = "";
+        stage.style.transformOrigin = "";
+      }
+    };
+    window.setTimeout(clear, motion.reduced ? 0 : 300);
+  }
+
   function onPointerDown(event) {
     if (!pageFlip) {
       return;
     }
 
-    // A second finger during a drag interrupts it: the sheet goes back, nothing turns by accident.
+    if (event.pointerType === "touch") {
+      pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      if (pointers.size === 2) {
+        startPinch(); // a second finger means zoom, never a page turn
+        return;
+      }
+      if (pointers.size > 2 || pinch) {
+        return;
+      }
+    }
+
+    // A second pointer during a drag interrupts it: the sheet goes back, nothing turns by accident.
     if (gesture?.phase === "drag" && event.pointerId !== gesture.id) {
       cancelGesture();
       return;
@@ -236,6 +288,15 @@ export function createBookEngine({ stage, pages, config, motion, onChange }) {
   }
 
   function onPointerMove(event) {
+    if (pointers.has(event.pointerId)) {
+      pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    }
+    if (pinch) {
+      if (pointers.size >= 2) {
+        updatePinch();
+      }
+      return;
+    }
     if (!gesture || event.pointerId !== gesture.id) {
       return;
     }
@@ -275,7 +336,7 @@ export function createBookEngine({ stage, pages, config, motion, onChange }) {
     const first = samples[0];
     const last = samples[samples.length - 1];
     const velocity = first && last && last.t > first.t ? (last.d - first.d) / (last.t - first.t) : 0;
-    const flick = velocity > 0.3 && active.distance > 24;
+    const flick = velocity > 0.25 && active.distance > 24;
     const commit = commitAllowed && (progress >= settings.threshold || flick);
     lastGesture = { direction: active.direction, progress, velocity, flick, commit, blocked: !calc };
 
@@ -296,13 +357,22 @@ export function createBookEngine({ stage, pages, config, motion, onChange }) {
     gesture = null;
   }
 
+  function forgetPointer(event) {
+    pointers.delete(event.pointerId);
+    if (pinch && pointers.size < 2) {
+      endPinch();
+    }
+  }
+
   function onPointerUp(event) {
+    forgetPointer(event);
     if (gesture && event.pointerId === gesture.id) {
       release(true);
     }
   }
 
   function onPointerCancel(event) {
+    forgetPointer(event);
     if (gesture && event.pointerId === gesture.id) {
       cancelGesture();
     }
@@ -398,6 +468,18 @@ export function createBookEngine({ stage, pages, config, motion, onChange }) {
   stage.addEventListener("lostpointercapture", onLostCapture);
   stage.addEventListener("click", onClickCapture, true);
   // The stage, not just the window: it also changes when fonts, chrome or toolbars settle.
+  // iOS Safari: rubber-band scrolling or its own pinch would steal the touch (pointercancel) and
+  // the sheet would spring back. Touch moves inside the book are ours.
+  const blockNative = (event) => {
+    if (event.cancelable) {
+      event.preventDefault();
+    }
+  };
+  stage.addEventListener("touchmove", blockNative, { passive: false });
+  document.addEventListener("gesturestart", blockNative, { passive: false });
+  document.addEventListener("gesturechange", blockNative, { passive: false });
+  document.addEventListener("dblclick", blockNative, { passive: false });
+
   const stageObserver = new ResizeObserver(onResize);
   stageObserver.observe(stage);
   window.addEventListener("resize", onResize);
@@ -428,6 +510,10 @@ export function createBookEngine({ stage, pages, config, motion, onChange }) {
       stage.removeEventListener("lostpointercapture", onLostCapture);
       stage.removeEventListener("click", onClickCapture, true);
       stageObserver.disconnect();
+      stage.removeEventListener("touchmove", blockNative);
+      document.removeEventListener("gesturestart", blockNative);
+      document.removeEventListener("gesturechange", blockNative);
+      document.removeEventListener("dblclick", blockNative);
       window.removeEventListener("resize", onResize);
       document.removeEventListener("keydown", onKey);
       pageFlip?.destroy();
