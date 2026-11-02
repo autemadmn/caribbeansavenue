@@ -1,0 +1,29 @@
+/* Caribbean's Avenue · theme for the editorial menu engine.
+   Night bar, warm gold, ivory paper. Fonts: Cormorant Garamond (SIL OFL 1.1), self-hosted. */
+
+@font-face {
+  font-family: "Cormorant Garamond";
+  src: url("../../assets/fonts/cormorant.woff2") format("woff2");
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Cormorant Garamond";
+  src: url("../../assets/fonts/cormorant-italic.woff2") format("woff2");
+  font-weight: 400 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  --ed-table: #0b0907;
+  --ed-table-light: #1d1610;
+  --ed-paper: #ede5d7;
+  --ed-paper-shade: #ddd1bc;
+  --ed-ink: #1f1a15;
+  --ed-ink-soft: #5c5249;
+  --ed-accent: #7a5a24;
+  --ed-accent-bright: #d7ac67;
+}

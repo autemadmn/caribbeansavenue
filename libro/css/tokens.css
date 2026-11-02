@@ -1,0 +1,56 @@
+/* Aledares · editorial menu engine · design tokens
+   Engine defaults. Each restaurant overrides them in themes/<restaurant>.css;
+   the engine CSS (editorial.css) only ever reads these variables. */
+
+:root {
+  /* Colour: the table, the paper, the ink */
+  --ed-table: #0d0b09;
+  --ed-table-light: #1a1511;
+  --ed-paper: #ece4d6;
+  --ed-paper-shade: #ddd2bf;
+  --ed-ink: #1e1a16;
+  --ed-ink-soft: #5f564d;
+  --ed-ink-faint: rgba(30, 26, 22, 0.16);
+  --ed-accent: #7a5a24;          /* prices, marks: 5.1:1 on --ed-paper */
+  --ed-accent-bright: #d7ac67;   /* accent on dark surfaces */
+  --ed-on-dark: #f3ece0;
+  --ed-on-dark-soft: rgba(243, 236, 224, 0.72);
+  --ed-focus: #b07d2c;
+
+  /* Type */
+  --ed-serif: "Cormorant Garamond", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --ed-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --ed-display-weight: 600;
+  --ed-label-tracking: 0.16em;
+
+  /* Spacing scale (4-based) */
+  --ed-s1: 0.25rem;
+  --ed-s2: 0.5rem;
+  --ed-s3: 0.75rem;
+  --ed-s4: 1rem;
+  --ed-s5: 1.5rem;
+  --ed-s6: 2rem;
+  --ed-s7: 3rem;
+
+  /* Paper */
+  --ed-paper-shadow: 0 1.2rem 2.8rem rgba(0, 0, 0, 0.45), 0 0.2rem 0.5rem rgba(0, 0, 0, 0.3);
+  --ed-spine-shade: 0.16;        /* darkness of the gutter gradient */
+  --ed-grain-opacity: 0.32;
+
+  /* Glass & reflections (cocktail scene) */
+  --ed-glass-highlight: 0.7;
+
+  /* Motion: two curves, a handful of durations */
+  --ed-ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);   /* = GSAP power3.out */
+  --ed-ease-in: cubic-bezier(0.55, 0.085, 0.68, 0.53);  /* = GSAP power2.in */
+  --ed-dur-micro: 160ms;
+  --ed-dur-text: 360ms;
+  --ed-dur-open: 420ms;
+  --ed-dur-close: 320ms;
+
+  /* Layout */
+  --ed-chrome-top: 3rem;
+  --ed-chrome-bottom: 3.5rem;
+  --ed-stage-gap: 0.5rem;
+  --ed-tap: 2.75rem;             /* minimum touch target */
+}

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0d0b09">
+    <meta name="robots" content="noindex">
+    <meta name="description" content="Carta de cócteles de Caribbean's Avenue, en formato libro.">
+    <title>Caribbean's Avenue · Carta</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23070606'/%3E%3Cg fill='none' stroke='%23d7ac67' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M16 26V12'/%3E%3Cpath d='M16 13c-5 1-7 4-8 8M16 13c5 1 7 4 8 8M16 12c-3-3-6-4-9-3M16 12c3-3 6-4 9-3M16 12c-1-4 0-6 2-8'/%3E%3C/g%3E%3C/svg%3E">
+    <link rel="preload" href="../assets/fonts/cormorant.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="../assets/fonts/cormorant-italic.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" as="image" href="../assets/img/portada-828.webp" imagesrcset="../assets/img/portada-540.webp 540w, ../assets/img/portada-828.webp 828w" imagesizes="100vw" fetchpriority="high">
+    <!-- fetch the whole module graph in parallel instead of import-by-import (matters on 3G) -->
+    <link rel="modulepreload" href="js/main.js">
+    <link rel="modulepreload" href="js/config.js">
+    <link rel="modulepreload" href="js/data-adapter.js">
+    <link rel="modulepreload" href="js/motion.js">
+    <link rel="modulepreload" href="js/text-motion.js">
+    <link rel="modulepreload" href="js/editorial-pages.js">
+    <link rel="modulepreload" href="js/book-engine.js">
+    <link rel="modulepreload" href="js/product-detail.js">
+    <link rel="modulepreload" href="js/shared-transition.js">
+    <link rel="modulepreload" href="../data/carta.js">
+    <link rel="stylesheet" href="css/tokens.css">
+    <link rel="stylesheet" href="themes/caribbeans-avenue.css">
+    <link rel="stylesheet" href="css/editorial.css">
+  </head>
+  <body>
+    <div class="app" id="app">
+      <header class="chrome chrome-top">
+        <a class="chrome-link" href="../" data-i18n="classic">Carta clásica</a>
+        <p class="folio" id="folio" aria-live="polite"></p>
+        <div class="lang" role="group" aria-label="Idioma / Language">
+          <button type="button" data-locale="es" aria-pressed="true">ES</button>
+          <button type="button" data-locale="en" aria-pressed="false">EN</button>
+        </div>
+      </header>
+
+      <main class="stage" id="stage" aria-label="Carta">
+        <!-- Pages are built from data/carta.js by editorial-pages.js -->
+        <noscript>
+          <p class="noscript">Esta versión necesita JavaScript. <a href="../">Abrir la carta clásica</a>.</p>
+        </noscript>
+      </main>
+
+      <nav class="chrome chrome-bottom" aria-label="Pasar página">
+        <button class="turn turn-prev" type="button" data-turn="prev">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+          <span data-i18n="prev">Anterior</span>
+        </button>
+        <button class="turn turn-next" type="button" data-turn="next">
+          <span data-i18n="next">Siguiente</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </nav>
+    </div>
+
+    <dialog class="detail" id="detail" aria-labelledby="detailName">
+      <div class="detail-surface" id="detailSurface">
+        <div class="detail-bar">
+          <button class="detail-close" type="button" data-close>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+            <span data-i18n="back">Volver a la carta</span>
+          </button>
+        </div>
+        <div class="detail-hero" id="detailHero"></div>
+        <div class="detail-body">
+          <h2 class="detail-name" id="detailName"></h2>
+          <p class="detail-price" id="detailPrice"></p>
+          <p class="detail-description" id="detailDescription"></p>
+          <section class="detail-section" aria-labelledby="ingredientsTitle">
+            <h3 id="ingredientsTitle" data-i18n="ingredients">Ingredientes</h3>
+            <ul class="ingredients" id="detailIngredients"></ul>
+          </section>
+          <section class="detail-section" aria-labelledby="allergensTitle">
+            <h3 id="allergensTitle" data-i18n="allergens">Alérgenos</h3>
+            <p class="detail-allergens" id="detailAllergens"></p>
+          </section>
+          <p class="detail-meta" id="detailMeta"></p>
+          <button class="detail-replay" id="detailReplay" type="button" hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5"/></svg>
+            <span data-i18n="replay">Ver de nuevo</span>
+          </button>
+        </div>
+      </div>
+    </dialog>
+
+    <script src="vendor/page-flip-2.0.7.browser.js" defer></script>
+    <script src="vendor/gsap-3.15.0.min.js" defer></script>
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>

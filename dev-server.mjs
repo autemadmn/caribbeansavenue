@@ -1,4 +1,4 @@
-import { createReadStream, existsSync } from "node:fs";
+import { createReadStream, existsSync, statSync } from "node:fs";
 import { extname, join, normalize } from "node:path";
 import { createServer } from "node:http";
 
@@ -8,11 +8,13 @@ const types = {
   ".css": "text/css; charset=utf-8",
   ".html": "text/html; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
+  ".mjs": "text/javascript; charset=utf-8",
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
   ".png": "image/png",
   ".svg": "image/svg+xml",
   ".webp": "image/webp",
+  ".woff2": "font/woff2",
 };
 
 function filePathFromUrl(url) {
@@ -23,7 +25,17 @@ function filePathFromUrl(url) {
     return null;
   }
 
-  return existsSync(resolved) ? resolved : null;
+  if (!existsSync(resolved)) {
+    return null;
+  }
+
+  // Folders serve their index.html (e.g. /libro/).
+  if (statSync(resolved).isDirectory()) {
+    const index = join(resolved, "index.html");
+    return existsSync(index) ? index : null;
+  }
+
+  return resolved;
 }
 
 function createStaticServer(port) {
@@ -53,7 +65,7 @@ function createStaticServer(port) {
   });
 
   server.listen(port, "127.0.0.1", () => {
-    console.log(`Avenue Caribbean's menu: http://127.0.0.1:${port}`);
+    console.log(`Caribbean's Avenue menu: http://127.0.0.1:${port}`);
   });
 }
 
