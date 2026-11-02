@@ -30,21 +30,21 @@ export const COCKTAIL_MOTION = {
       kind: "ice",
       sprite: `${ASSETS}clear-ice.webp`, // a clear cube (crushed ice is frosted, wrong for a spritz)
       tint: "rgba(255, 170, 100, 0.16)", // the warm light of this photo
-      width: 3.9, // the piece, % of height (about a third of the cubes already in the glass)
-      x: 20.5, // the free stretch of surface left of the glass' long reflection
-      fromX: 31, // it comes in at a slight angle, well inside the rim
+      width: 10, // % of height: the size of the cubes already in the glass (measured: ~11 %)
+      x: 33, // goes in just behind the glass' long reflection, beside the other cubes
+      fromX: 44, // it comes in at a slight angle, well inside the rim
       start: 0.1,
-      from: -16,
-      to: 12.7,
+      from: -22,
+      to: 8.6, // its centre when it touches the surface
       spin: -0.7,
       after: "plunge",
-      depth: 5,
+      depth: 7,
       submergedTint: "rgba(255, 186, 118, 0.6)", // under the surface it takes the drink's colour
     },
-    ripple: { cx: 20.5, cy: 13.0, k: 0.11, amplitude: 0.85, wavelength: 3.2, speed: 26, damping: 0.36, shade: 1.3, region: [8, 9, 84, 8], band: 2.2 },
+    ripple: { cx: 33, cy: 13.1, k: 0.11, amplitude: 1.2, wavelength: 4.4, speed: 30, damping: 0.4, shade: 1.3, region: [8, 9, 84, 8], band: 2.4 },
     // same gravity as the falling ice (a gentle slow motion): drops rise 2–6 % of the glass
-    splash: { count: 12, jets: 2, speed: [38, 70], spread: 0.6, size: [0.24, 0.52], sample: [19, 17], gravity: 560 },
-    bubbles: { count: 10, region: [15, 15, 9, 9], rise: [7, 13], size: [0.14, 0.32], start: 0.5, life: [0.35, 0.6] },
+    splash: { count: 16, jets: 2, speed: [55, 95], spread: 0.7, size: [0.3, 0.7], sample: [20, 17], gravity: 560 },
+    bubbles: { count: 14, region: [24, 15, 18, 11], rise: [7, 13], size: [0.16, 0.36], start: 0.5, life: [0.35, 0.6] },
     glint: { at: 0.46, duration: 0.55, strength: 0.4 },
   },
 
@@ -55,10 +55,10 @@ export const COCKTAIL_MOTION = {
     duration: 1.15,
     markers: { impact: 0.4, settle: 0.85 },
     interior: [[6, 3.4], [94, 3.4], [94, 11.2], [6, 11.2]], // above the foam, inside the rim
-    fall: { kind: "drop", sample: [50, 22], width: 1.7, x: 58, fromX: 58, start: 0.08, from: -12, to: 7.4, spin: 0, after: "absorb" },
+    fall: { kind: "drop", sample: [50, 22], width: 2.8, x: 58, fromX: 58, start: 0.08, from: -14, to: 7.2, spin: 0, after: "absorb" },
     // foam damps everything: a long, low swell rather than sharp rings
-    ripple: { ellipse: [50, 7.6, 43, 3.3], cx: 58, cy: 7.4, k: 0.2, amplitude: 0.32, wavelength: 3.4, speed: 16, damping: 0.24, shade: 0.45, shadeLimit: 0.1, region: [5, 3.6, 90, 8.4] },
-    splash: { count: 6, jets: 1, speed: [20, 34], spread: 0.7, size: [0.13, 0.24], sample: [50, 7.6], gravity: 560, k: 0.11 },
+    ripple: { ellipse: [50, 7.6, 43, 3.3], cx: 58, cy: 7.4, k: 0.2, amplitude: 0.42, wavelength: 3.4, speed: 16, damping: 0.24, shade: 0.45, shadeLimit: 0.1, region: [5, 3.6, 90, 8.4] },
+    splash: { count: 7, jets: 1, speed: [26, 42], spread: 0.7, size: [0.16, 0.3], sample: [50, 7.6], gravity: 560, k: 0.11 },
     sheen: { area: [[9, 12.2], [91, 12.2], [62, 37], [38, 37]], at: 0.5, duration: 0.55, color: "rgba(255, 206, 122, 0.9)", strength: 0.3 },
   },
 
@@ -71,9 +71,9 @@ export const COCKTAIL_MOTION = {
     markers: { impact: 0.42, settle: 1 },
     surface: [[8, 19], [92, 19]],
     interior: [[7, 1], [93, 1], [92, 95], [8, 95]],
-    fall: { kind: "ice", sprite: `${ASSETS}mojito-frutas-ice.webp`, width: 4.2, x: 51, fromX: 55, start: 0.1, from: -14, to: 5.8, spin: 0.8, after: "nestle", bounce: 1, settle: 1.1, slide: 0.6 },
-    ripple: { mode: "bump", ellipse: [55, 7, 30, 6], cx: 51, cy: 6, k: 0.6, amplitude: 0.35, radius: 5, period: 0.22, damping: 0.25, wavelength: 2, shade: 0.6, region: [22, 0.5, 66, 13] },
-    splash: { count: 5, jets: 0, speed: [26, 42], spread: 0.9, size: [0.12, 0.24], sample: [50, 8], gravity: 560, k: 0.4 }, // melt water off the ice
+    fall: { kind: "ice", sprite: `${ASSETS}mojito-frutas-ice.webp`, width: 8, x: 51, fromX: 56, start: 0.1, from: -20, to: 4.2, spin: 0.7, after: "nestle", bounce: 1.6, settle: 2, slide: 0.8 },
+    ripple: { mode: "bump", ellipse: [55, 7, 30, 6], cx: 51, cy: 6, k: 0.6, amplitude: 0.5, radius: 7, period: 0.24, damping: 0.25, wavelength: 2, shade: 0.6, region: [22, 0.5, 66, 13] },
+    splash: { count: 7, jets: 0, speed: [34, 55], spread: 0.9, size: [0.16, 0.32], sample: [50, 8], gravity: 560, k: 0.4 }, // melt water off the ice
     bubbles: { count: 9, region: [22, 24, 52, 44], rise: [5, 9], size: [0.12, 0.24], start: 0.5, life: [0.4, 0.7] },
     nudge: [{ rect: [3, 23, 26, 18], amount: 0.3, angle: 95, delay: 0.1 }],
   },
@@ -86,9 +86,9 @@ export const COCKTAIL_MOTION = {
     markers: { impact: 0.42, settle: 1 },
     surface: [[8, 16.5], [92, 16.5]],
     interior: [[7, 1], [93, 1], [92, 95], [8, 95]],
-    fall: { kind: "ice", sprite: `${ASSETS}mojito-clasico-ice.webp`, width: 4.2, x: 48, fromX: 52, start: 0.1, from: -14, to: 6.2, spin: 0.8, after: "nestle", bounce: 1, settle: 1.2, slide: 0.6 },
-    ripple: { mode: "bump", ellipse: [52, 7, 30, 6], cx: 48, cy: 6.3, k: 0.6, amplitude: 0.35, radius: 5, period: 0.22, damping: 0.25, wavelength: 2, shade: 0.6, region: [20, 0.5, 64, 13] },
-    splash: { count: 5, jets: 0, speed: [26, 42], spread: 0.9, size: [0.12, 0.24], sample: [50, 8], gravity: 560, k: 0.4 }, // melt water off the ice
+    fall: { kind: "ice", sprite: `${ASSETS}mojito-clasico-ice.webp`, width: 8, x: 48, fromX: 53, start: 0.1, from: -20, to: 4.4, spin: 0.7, after: "nestle", bounce: 1.6, settle: 2, slide: 0.8 },
+    ripple: { mode: "bump", ellipse: [52, 7, 30, 6], cx: 48, cy: 6.3, k: 0.6, amplitude: 0.5, radius: 7, period: 0.24, damping: 0.25, wavelength: 2, shade: 0.6, region: [20, 0.5, 64, 13] },
+    splash: { count: 7, jets: 0, speed: [34, 55], spread: 0.9, size: [0.16, 0.32], sample: [50, 8], gravity: 560, k: 0.4 }, // melt water off the ice
     bubbles: { count: 10, region: [25, 22, 50, 50], rise: [5, 9], size: [0.12, 0.25], start: 0.5, life: [0.4, 0.7] },
     nudge: [
       { rect: [40, 22, 40, 16], amount: 0.35, angle: 80, delay: 0.05 },
@@ -107,6 +107,17 @@ export function motionFor(productId) {
 export function photoSource(config, cssHeight) {
   const pixels = cssHeight * Math.min(window.devicePixelRatio || 1, 3);
   return `${config.photo.base}-${pixels > 860 ? 1200 : 720}.webp`;
+}
+
+// Behind every drink: the bar of the cover photo (already downloaded for the cover), out of focus.
+export const BACKDROP = { src: "../assets/img/portada-828.webp", position: "52% 10%" };
+
+/** the bar behind the drink: the photo, and where the counter and the glass' shadow fall */
+export function placeBackdrop(hero, box) {
+  hero.style.setProperty("--drink-backdrop", `url("${new URL(BACKDROP.src, document.baseURI).href}")`);
+  hero.style.setProperty("--drink-backdrop-position", BACKDROP.position);
+  hero.style.setProperty("--drink-floor", `${Math.round(box.iy + box.ih * 0.985)}px`);
+  hero.style.setProperty("--drink-foot", `${Math.round(box.iw * 0.42)}px`);
 }
 
 /** where the drink sits in the hero (css px): the static photo and the canvas use the same box */

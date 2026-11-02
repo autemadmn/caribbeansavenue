@@ -944,15 +944,48 @@ ol {
   cursor: pointer;
 }
 
-/* the signature drinks: their photo on the studio black it was shot on, a little light behind */
+/* the signature drinks stand on the bar: the cover's bar out of focus behind them, a dark counter
+   under them and the shadow of the glass where it touches it (positions set by placeBackdrop) */
 .detail-surface[data-hero="drink"] .detail-hero {
-  background: radial-gradient(ellipse 70% 60% at 50% 42%, #1c1510 0%, #0c0907 70%);
+  background: #0b0907;
+}
+
+.detail-surface[data-hero="drink"] .detail-hero::before,
+.detail-surface[data-hero="drink"] .detail-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.detail-surface[data-hero="drink"] .detail-hero::before {
+  inset: -24px;
+  background: var(--drink-backdrop) var(--drink-backdrop-position, 30% 8%) / cover no-repeat;
+  filter: blur(9px) brightness(0.62) saturate(1.1);
+  transform: scale(1.12);
+}
+
+.detail-surface[data-hero="drink"] .detail-hero::after {
+  background:
+    radial-gradient(var(--drink-foot, 70px) 8px at 50% var(--drink-floor, 96%), rgba(0, 0, 0, 0.75), transparent),
+    linear-gradient(
+      to bottom,
+      transparent calc(var(--drink-floor, 96%) - 26px),
+      rgba(52, 33, 19, 0.5) var(--drink-floor, 96%),
+      rgba(12, 8, 6, 0.92) 100%
+    ),
+    radial-gradient(ellipse 85% 75% at 50% 42%, transparent 35%, rgba(6, 4, 3, 0.7) 100%);
 }
 
 .detail-drink {
   position: absolute;
+  z-index: 1;
   display: block;
   object-fit: contain;
+}
+
+.detail-surface[data-hero="drink"] .detail-scene {
+  z-index: 1;
 }
 
 /* facing «back», so it never sits on the glass */

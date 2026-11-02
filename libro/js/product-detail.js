@@ -8,7 +8,7 @@
 
 import { DURATION } from "./motion.js";
 import { createSharedTransition } from "./shared-transition.js";
-import { layoutPhoto, motionFor, photoSource } from "./cocktail/motion-config.js";
+import { layoutPhoto, motionFor, photoSource, placeBackdrop } from "./cocktail/motion-config.js";
 
 const MAX_STEP = 0.05; // s of scene time per frame, at most
 
@@ -150,6 +150,7 @@ export function createProductDetail({ dialog, menu, motion, textMotion, config, 
     const { width, height } = hero.getBoundingClientRect();
     const box = layoutPhoto(cfg, width, height);
     Object.assign(drink.style, { left: `${box.ix}px`, top: `${box.iy}px`, width: `${box.iw}px`, height: `${box.ih}px` });
+    placeBackdrop(hero, box);
     drink.src = photoSource(cfg, box.ih);
   }
 

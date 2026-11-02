@@ -811,7 +811,14 @@ export function createIceScene(canvas, product) {
       geometry = null;
       return true;
     },
+    // Empty every layer now (Safari caps the memory all canvases may use; past it they stop drawing).
     destroy() {
+      for (const layer of [backdrop, front, ice?.canvas, ...restingIce.map((piece) => piece.sprite?.canvas)]) {
+        if (layer) {
+          layer.width = 0;
+          layer.height = 0;
+        }
+      }
       backdrop = null;
       front = null;
       ice = null;

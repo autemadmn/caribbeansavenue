@@ -13,7 +13,7 @@
 // No 3D, no physics engine, no video: Canvas 2D at most 2× density, a few dozen particles.
 // The scene is a pure function of time (draw(t)); the last frame is exactly the untouched photo.
 
-import { layoutPhoto } from "./motion-config.js";
+import { layoutPhoto, placeBackdrop } from "./motion-config.js";
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -41,6 +41,15 @@ function loadImage(src) {
   img.decoding = "async";
   img.src = src;
   return img.decode().then(() => img);
+}
+
+function release(...canvases) {
+  for (const canvas of canvases) {
+    if (canvas instanceof HTMLCanvasElement) {
+      canvas.width = 0;
+      canvas.height = 0;
+    }
+  }
 }
 
 function makeCanvas(width, height) {
@@ -160,6 +169,9 @@ export async function createDrinkScene(canvas, photo, config, product) {
     L = layoutPhoto(config, W, H);
     // the <img> underneath (the fallback, and what screen readers skip) sits exactly where we draw
     Object.assign(photo.style, { left: `${L.ix}px`, top: `${L.iy}px`, width: `${L.iw}px`, height: `${L.ih}px` });
+    if (photo.parentElement) {
+      placeBackdrop(photo.parentElement, L);
+    }
 
     base = makeCanvas(canvas.width, canvas.height);
     const b = base.getContext("2d");
@@ -874,15 +886,30 @@ export async function createDrinkScene(canvas, photo, config, product) {
       base = null;
       return true;
     },
+    // Every layer is emptied now, not when the garbage collector gets to it: Safari caps the
+    // memory all canvases may use, and past it new ones silently stop drawing.
     destroy() {
       photo.style.visibility = "";
+      release(
+        canvas,
+        base,
+        spec?.canvas,
+        glint,
+        ripple?.canvas,
+        fallSprites?.lens,
+        fallSprites?.silhouette,
+        fallSprites?.air,
+        fallSprites?.under,
+        condensation?.lens,
+        ...nudges.flatMap((nudge) => [nudge.patch, nudge.mask]),
+      );
       base = null;
       spec = null;
       glint = null;
       ripple = null;
       fallSprites = null;
-      canvas.width = 0;
-      canvas.height = 0;
+      condensation = null;
+      nudges = [];
     },
   };
 }
