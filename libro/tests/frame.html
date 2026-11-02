@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="robots" content="noindex">
+    <title>Vista móvil</title>
+    <style>
+      html, body { margin: 0; background: #111; }
+      iframe { display: block; border: 0; }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile-sized view of the book for screenshots: /libro/tests/frame.html?w=390&h=844&src=<query for /libro/> -->
+    <iframe id="frame" title="Carta"></iframe>
+    <script>
+      const query = new URLSearchParams(location.search);
+      const frame = document.getElementById("frame");
+      frame.width = query.get("w") || 390;
+      frame.height = query.get("h") || 844;
+      frame.src = `../index.html?${query.get("src") || ""}`;
+    </script>
+  </body>
+</html>

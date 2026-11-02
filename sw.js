@@ -1,9 +1,9 @@
 // Caribbean's Avenue · offline cache
 // Bump VERSION whenever index.html, styles.css or app.js change, so phones pick up the new menu.
-const VERSION = "carta-v3";
+const VERSION = "carta-v4";
 const SHELL = [
   "./",
-  "index.html",
+  "clasica.html",
   "styles.css?v=3",
   "app.js?v=3",
   "assets/brand/caribbeans-logo-white.svg",
@@ -58,7 +58,7 @@ async function pageResponse(request) {
     // Offline or network error: use the saved copy below.
   }
 
-  const cached = (await cache.match(request, { ignoreSearch: true })) || (await cache.match("index.html"));
+  const cached = (await cache.match(request, { ignoreSearch: true })) || (await cache.match("clasica.html"));
   return cached || network;
 }
 

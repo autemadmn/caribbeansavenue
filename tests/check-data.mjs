@@ -7,7 +7,7 @@ import { dirname, join } from "node:path";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const { default: carta } = await import(new URL("../data/carta.js", import.meta.url));
-const html = readFileSync(join(root, "index.html"), "utf8");
+const html = readFileSync(join(root, "clasica.html"), "utf8");
 
 const decode = (text) =>
   text

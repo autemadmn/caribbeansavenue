@@ -36,7 +36,9 @@ const storage = {
 };
 
 const params = new URLSearchParams(location.search);
-const dataUrl = params.get("data") === "fixture" ? "../tests/fixture-data.js" : config.data;
+// test hooks: ?data=fixture (a product with a photo), ?data=broken (data that fails to load)
+const TEST_DATA = { fixture: "../tests/fixture-data.js", broken: "../tests/missing-data.js" };
+const dataUrl = TEST_DATA[params.get("data")] || config.data;
 const { default: raw } = await import(dataUrl);
 const menu = createMenu(raw, config);
 const motion = createMotion(config);
@@ -170,15 +172,43 @@ if (book && restorePage > 0 && restorePage < book.count) {
 }
 onPageChange(book?.current ?? 0);
 
+const intro = window.EdIntro;
 const firstVisit = !storage.get(COVER_KEY, sessionStorage);
 storage.set(COVER_KEY, "1", sessionStorage);
-if (firstVisit && book?.current === 0 && config.features.textMotion) {
-  const cover = pages.elements[0];
-  const tl = textMotion.words(cover.querySelector('[data-reveal="cover"]'), { key: "cover", stagger: 0.08 });
-  textMotion.sequence([...cover.querySelectorAll(".cover-sub, .cover-tagline, .cover-hint")], { timeline: tl, at: 0.45, stagger: 0.1 });
-  if (config.gesture.peekOnce) {
-    window.setTimeout(() => book?.peek(), motion.enabled ? 1500 : 600);
+
+// After the brand intro lands (or straight away without it): the rest of the cover arrives,
+// then the corner lifts once to show the page can be turned.
+function welcomeCover() {
+  if (book?.current !== 0) {
+    return;
   }
+  const cover = pages.elements[0];
+  if (config.features.textMotion) {
+    textMotion.sequence([...cover.querySelectorAll(".cover-sub, .cover-tagline, .cover-hint")], { stagger: 0.09, distance: 8 });
+  }
+  if (config.gesture.peekOnce) {
+    window.setTimeout(() => book?.peek(), motion.enabled ? 700 : 300);
+  }
+}
+
+if (intro?.active) {
+  intro.done.then(() => {
+    if (intro.state === "done") {
+      welcomeCover();
+    }
+  });
+  // Ready = the cover is painted with its photo and fonts. Capped so a slow photo never holds
+  // the door: the intro opens and the photo fades in when it arrives.
+  const coverPhoto = pages.elements[0].querySelector(".cover-photo");
+  const painted = () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  Promise.race([
+    Promise.all([coverPhoto?.decode?.().catch(() => {}), document.fonts.ready]),
+    new Promise((resolve) => setTimeout(resolve, 2500)),
+  ])
+    .then(painted)
+    .then(() => intro.ready());
+} else if (firstVisit) {
+  welcomeCover();
 }
 
 // Read-only handle for tests/index.html.

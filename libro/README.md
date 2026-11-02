@@ -15,6 +15,34 @@ node tests/check-data.mjs      # coherencia datos ↔ carta clásica
 
 Parámetros útiles: `?lang=en`, `?data=fixture` (datos de prueba con una foto de producto).
 
+## Intro de marca
+
+`js/intro.js` + estilos críticos en `index.html`. Una vez por sesión.
+
+1. **Montaje (~0,7 s, CSS, desde el primer pintado):** el anillo de la C se dibuja con un barrido
+   cónico desde el corte de la C; «aribbean's» sube letra a letra desde una máscara en su línea
+   base; AVENUE se descubre de izquierda a derecha; el punto de la i y el apóstrofo caen al final.
+2. **Apertura (0,6 s):** el hueco de la C se convierte en la abertura que descubre la portada
+   (con un filo de luz dorada que se apaga al abrirse) mientras el logo vuela a su sitio exacto en
+   la portada. Al aterrizar se retira la intro y queda el logo real de la portada en el mismo punto.
+3. **Sin esperas artificiales:** la apertura empieza cuando el montaje ha terminado y la carta está
+   lista (libro construido, foto de portada decodificada, fuentes; con tope de 2,5 s para la foto).
+   Si tarda más de 1,7 s aparece «Preparando la carta…». Si en 7 s no ha cargado, se muestra un
+   enlace a la carta clásica en vez de una pantalla vacía.
+4. Reloj propio (`requestAnimationFrame` + `performance.now`), no GSAP: en un móvil saturado
+   termina a su hora en vez de alargarse, y no depende de que GSAP haya llegado.
+5. `prefers-reduced-motion`: logo quieto que se funde.
+
+Revisión de diseño: `?intro=debug&at=<ms>` congela el montaje; `&open=<0..1>` pinta un instante
+de la apertura. `tests/frame.html?src=<query>` muestra la carta en un iframe de 390×844 para
+capturas.
+
+**Logo:** `assets/brand/caribbeans-logo.svg` es el PNG original del local
+(`caribbeans-logo-source.png`) vectorizado con potrace por componentes (anillo, 11 piezas de la
+palabra, 6 letras de AVENUE): 99,2 % de coincidencia píxel a píxel con el original, sin redibujar
+nada. Ravikaa (github.com/1ung07/ravikaa, sin licencia) se estudió solo como referencia de
+máscaras y abertura; no se ha usado su código.
+
 ## Arquitectura
 
 Sin framework ni build: módulos ES nativos, igual que el resto del proyecto.
@@ -78,13 +106,13 @@ del cóctel. La escena de hielo está dibujada por código.
 
 ## Pruebas (`tests/index.html`)
 
-26 pruebas de riesgo con Pointer Events reales en un iframe de móvil: arrastre lento que pasa y
+30 pruebas de riesgo con Pointer Events reales en un iframe de móvil: arrastre lento que pasa y
 que se cancela, umbral 26 % / 34 %, rápido-y-vuelta, lento-y-acelerar, rápido-y-frenar, página
 anterior, cambio de dirección, segundo dedo, `pointercancel`, ratón, tocar cóctel sin pasar
 página (con foco devuelto), arrastrar empezando sobre un cóctel, límites del libro, botones y
 teclado, índice, Top ventas, títulos revelados, idioma, girar pantalla, cambio rápido de
 producto, ficha sin foto, ficha con foto (fixture), reproducción / interrupción / cambio de
-producto durante la escena. Más `node tests/check-data.mjs`.
+producto durante la escena, libro a tamaño completo al abrir, y la intro (aterrizaje, una vez por sesión, salida segura si la carta no carga). Más `node tests/check-data.mjs`.
 
 Verificado en Chrome (escritorio y emulación móvil 375/390 px, tablet apaisada 1180 px,
 `prefers-reduced-motion`). **No verificado: Safari iOS ni Chrome en un Android real.** Abre

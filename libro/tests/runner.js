@@ -16,7 +16,10 @@ async function load(query = "", { width = 390, height = 844 } = {}) {
   frame.height = height;
   sessionStorage.clear();
   localStorage.removeItem("ed-locale");
-  sessionStorage.setItem("ed-cover-seen", "1"); // skip the first-visit intro so gestures start clean
+  sessionStorage.setItem("ed-cover-seen", "1"); // skip the first-visit cover cascade so gestures start clean
+  if (!query.includes("intro=")) {
+    sessionStorage.setItem("ed-intro-seen", "1"); // the brand intro has its own tests
+  }
   frame.src = `../index.html?lang=es${query ? `&${query}` : ""}&t=${Date.now()}`;
   await new Promise((resolve) => frame.addEventListener("load", resolve, { once: true }));
   win = frame.contentWindow;
@@ -141,6 +144,14 @@ const expect = (condition, message) => {
   }
 };
 
+test("El libro ocupa el escenario al abrirse (no se queda a escala mínima)", async () => {
+  await load();
+  const stage = doc.querySelector("#stage").getBoundingClientRect();
+  await until(() => doc.querySelector(".page--cover").getBoundingClientRect().width > stage.width * 0.9, 3000);
+  const cover = doc.querySelector(".page--cover").getBoundingClientRect();
+  expect(cover.width > stage.width * 0.9 && cover.height > stage.height * 0.9, `portada ${Math.round(cover.width)}×${Math.round(cover.height)} en escenario ${Math.round(stage.width)}×${Math.round(stage.height)}`);
+});
+
 test("Arrastre lento que pasa la página (45 % en 1,2 s)", async () => {
   await load();
   await goTo(1);
@@ -234,7 +245,7 @@ test("Tocar un cóctel abre su ficha sin pasar página", async () => {
   expect(lib.detail.isOpen && lib.detail.current === "porn-star-martini", "la ficha no se abrió");
   expect(lib.book.current === 2, `página ${lib.book.current}`);
   doc.querySelector("#detail [data-close]").click();
-  await wait(600);
+  await until(() => !lib.detail.isOpen);
   expect(!lib.detail.isOpen, "la ficha no se cerró");
   expect(lib.book.current === 2, "volvió a otra página");
   expect(doc.activeElement?.dataset.product === "porn-star-martini", "el foco no volvió al cóctel");
@@ -291,7 +302,7 @@ test("Top ventas del índice abre la ficha y vuelve al índice", async () => {
   await wait(600);
   expect(lib.detail.current === "porn-star-martini", "no abrió la ficha");
   doc.querySelector("#detail [data-close]").click();
-  await wait(600);
+  await until(() => !lib.detail.isOpen);
   expect(!lib.detail.isOpen && lib.book.current === 1, `página ${lib.book.current}`);
 });
 
@@ -319,7 +330,7 @@ test("Girar / redimensionar conserva la página (móvil → tablet apaisada → 
   await goTo(3);
   frame.width = 1180;
   frame.height = 820;
-  for (let i = 0; i < 40 && !lib.book.spread; i += 1) {
+  for (let i = 0; i < 70 && !lib.book.spread; i += 1) {
     await wait(100);
   }
   await settle();
@@ -327,7 +338,7 @@ test("Girar / redimensionar conserva la página (móvil → tablet apaisada → 
   expect(lib.book.current === 3, `página ${lib.book.current}`);
   frame.width = 390;
   frame.height = 844;
-  for (let i = 0; i < 40 && lib.book.spread; i += 1) {
+  for (let i = 0; i < 70 && lib.book.spread; i += 1) {
     await wait(100);
   }
   await settle();
@@ -381,7 +392,7 @@ test("Cóctel: la escena se reproduce una vez y deja ingredientes visibles", asy
   expect(items.length === 5 && items.every(visible), "ingredientes no visibles");
   expect(!doc.querySelector("#detailReplay").hidden, "falta ‘Ver de nuevo’");
   doc.querySelector("#detail [data-close]").click();
-  await wait(600);
+  await until(() => !lib.detail.isOpen);
   await tap(doc.querySelector('.dish[data-product="mojito-clasico"]'));
   await wait(500);
   expect(!lib.motion.isRunning("scene"), "no debería repetirse sola");
@@ -396,10 +407,11 @@ test("Cóctel: cerrar a mitad de la escena no deja nada oculto", async () => {
   await tap(doc.querySelector('.dish[data-product="caipirinha"]'));
   await wait(650);
   doc.querySelector("#detail [data-close]").click();
-  await wait(600);
+  await until(() => !lib.detail.isOpen);
   expect(!lib.detail.isOpen, "no se cerró");
   await tap(doc.querySelector('.dish[data-product="caipirinha"]'));
-  await wait(700);
+  // the reopening transition may still be fading things in; what matters is where it ends
+  await until(() => !lib.motion.isRunning("detail"), 3000);
   const items = [...doc.querySelectorAll("#detailIngredients li")];
   expect(items.every(visible), "ingredientes ocultos tras interrumpir");
   expect(visible(doc.querySelector("#detailPrice")), "precio oculto");
@@ -415,6 +427,42 @@ test("Cóctel: cambiar de producto durante la escena", async () => {
   expect(lib.detail.current === "caipiroska", "producto equivocado");
   expect(!lib.motion.isRunning("scene"), "escena colgada");
   expect([...doc.querySelectorAll("#detailIngredients li")].every(visible), "ingredientes ocultos");
+});
+
+test("Intro: el logo se dibuja, la C se abre y aterriza en la portada", async () => {
+  const started = performance.now();
+  await load("intro=1");
+  const intro = win.EdIntro;
+  expect(intro.active, "la intro no arrancó");
+  await until(() => intro.state === "done", 6000);
+  expect(intro.state === "done", `estado ${intro.state}`);
+  expect(!doc.querySelector("#intro"), "la capa de la intro sigue en la página");
+  expect(!doc.documentElement.classList.contains("intro-active"), "la portada sigue oculta");
+  const logo = doc.querySelector(".cover-logo");
+  expect(win.getComputedStyle(logo).opacity === "1" && logo.getBoundingClientRect().width > 0, "el logo de la portada no está visible");
+  expect(lib.book.current === 0, `página ${lib.book.current}`);
+  expect(performance.now() - started < 6000, "demasiado lenta");
+});
+
+test("Intro: no se repite en la misma sesión", async () => {
+  frame.src = `../index.html?lang=es&t=${Date.now()}`; // same session, no intro flag
+  await new Promise((resolve) => frame.addEventListener("load", resolve, { once: true }));
+  win = frame.contentWindow;
+  doc = frame.contentDocument;
+  expect(doc.documentElement.classList.contains("no-intro"), "debería saltarse");
+  expect(!win.EdIntro.active && !doc.querySelector("#intro"), "la intro volvió a aparecer");
+});
+
+test("Intro: salida segura si la carta no carga", async () => {
+  sessionStorage.clear();
+  frame.src = `../index.html?lang=es&intro=1&data=broken&t=${Date.now()}`;
+  await new Promise((resolve) => frame.addEventListener("load", resolve, { once: true }));
+  win = frame.contentWindow;
+  doc = frame.contentDocument;
+  await until(() => win.EdIntro?.state === "failed", 9000);
+  const link = doc.querySelector("#introStatus a");
+  expect(win.EdIntro.state === "failed", `estado ${win.EdIntro?.state}`);
+  expect(link && link.getAttribute("href") === "../clasica.html", "falta el enlace a la carta clásica");
 });
 
 /* ---------- Run ---------- */

@@ -100,6 +100,17 @@ export function createBookEngine({ stage, pages, config, motion, onChange }) {
       current = event.data;
       onChange?.(current);
     });
+
+    // StPageFlip measures its block once, at construction. If that happened before the block had
+    // its final height (layout still settling), the pages stay tiny. Re-measure after first paint.
+    requestAnimationFrame(() => requestAnimationFrame(refreshSize));
+  }
+
+  /** Recalculate StPageFlip's geometry for the current block size (no rebuild). */
+  function refreshSize() {
+    if (pageFlip && !destroyed && isIdle()) {
+      pageFlip.update();
+    }
   }
 
   function rebuild() {
@@ -123,6 +134,8 @@ export function createBookEngine({ stage, pages, config, motion, onChange }) {
     resizeTimer = window.setTimeout(() => {
       if (needsRebuild(layoutFor(measure()))) {
         rebuild();
+      } else {
+        refreshSize();
       }
     }, 180);
   }
@@ -366,6 +379,9 @@ export function createBookEngine({ stage, pages, config, motion, onChange }) {
   stage.addEventListener("pointercancel", onPointerCancel);
   stage.addEventListener("lostpointercapture", onPointerCancel);
   stage.addEventListener("click", onClickCapture, true);
+  // The stage, not just the window: it also changes when fonts, chrome or toolbars settle.
+  const stageObserver = new ResizeObserver(onResize);
+  stageObserver.observe(stage);
   window.addEventListener("resize", onResize);
   document.addEventListener("keydown", onKey);
 
@@ -393,6 +409,7 @@ export function createBookEngine({ stage, pages, config, motion, onChange }) {
       stage.removeEventListener("pointercancel", onPointerCancel);
       stage.removeEventListener("lostpointercapture", onPointerCancel);
       stage.removeEventListener("click", onClickCapture, true);
+      stageObserver.disconnect();
       window.removeEventListener("resize", onResize);
       document.removeEventListener("keydown", onKey);
       pageFlip?.destroy();
