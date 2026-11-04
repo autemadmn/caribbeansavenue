@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#070606">
+  <title>Tu carta · Caribbean's Avenue</title>
+  <style>
+    @font-face {
+      font-family: "Cormorant Garamond";
+      src: url("../assets/fonts/cormorant.woff2") format("woff2");
+      font-weight: 300 700;
+      font-display: swap;
+    }
+    :root {
+      --black: #070606;
+      --card: #12100e;
+      --line: rgba(247, 242, 232, 0.12);
+      --paper: #f7f2e8;
+      --muted: #bdb5aa;
+      --gold: #d7ac67;
+      --gold-bright: #f4c68a;
+      --serif: "Cormorant Garamond", "Bodoni 72", Didot, Georgia, serif;
+      --sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color-scheme: dark;
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      background: var(--black);
+      color: var(--paper);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.45;
+    }
+    main {
+      max-width: 34rem;
+      margin: 0 auto;
+      padding: calc(2.5rem + env(safe-area-inset-top)) 1.25rem calc(3rem + env(safe-area-inset-bottom));
+    }
+    header { text-align: center; margin-bottom: 2.5rem; }
+    header img { width: 9.5rem; height: auto; opacity: 0.95; }
+    h1 {
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: 2.1rem;
+      line-height: 1.1;
+      margin: 1.5rem 0 0.75rem;
+    }
+    header p { color: var(--muted); margin: 0 auto; max-width: 26rem; }
+
+    fieldset {
+      border: 1px solid var(--line);
+      border-radius: 1rem;
+      background: var(--card);
+      padding: 1.25rem 1.1rem 1.1rem;
+      margin: 0 0 1rem;
+    }
+    legend {
+      float: left;
+      width: 100%;
+      padding: 0;
+      margin-bottom: 1rem;
+      font-family: var(--serif);
+      font-size: 1.45rem;
+      font-weight: 500;
+      line-height: 1.2;
+    }
+    legend .n {
+      display: block;
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.3rem;
+    }
+    .options { clear: both; display: grid; gap: 0.5rem; }
+    .option {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      min-height: 3.25rem;
+      padding: 0.7rem 0.9rem;
+      border: 1px solid var(--line);
+      border-radius: 0.75rem;
+      cursor: pointer;
+      transition: border-color 0.15s, background-color 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .option input {
+      appearance: none;
+      flex: none;
+      width: 1.2rem;
+      height: 1.2rem;
+      margin: 0;
+      border: 1.5px solid var(--muted);
+      border-radius: 50%;
+      display: grid;
+      place-content: center;
+    }
+    .option input::after {
+      content: "";
+      width: 0.6rem;
+      height: 0.6rem;
+      border-radius: 50%;
+      background: var(--gold-bright);
+      transform: scale(0);
+      transition: transform 0.15s;
+    }
+    .option input:checked { border-color: var(--gold-bright); }
+    .option input:checked::after { transform: scale(1); }
+    .option:has(input:checked) {
+      border-color: var(--gold);
+      background: rgba(215, 172, 103, 0.08);
+    }
+    .option input:focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 3px; }
+    .option small { display: block; color: var(--muted); font-size: 0.85rem; }
+
+    .note { clear: both; margin-top: 0.9rem; }
+    .note label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+    }
+    textarea {
+      width: 100%;
+      min-height: 2.9rem;
+      padding: 0.7rem 0.85rem;
+      border: 1px solid var(--line);
+      border-radius: 0.75rem;
+      background: var(--black);
+      color: var(--paper);
+      font: inherit;
+      resize: vertical;
+      field-sizing: content;
+    }
+    textarea:focus { outline: none; border-color: var(--gold); }
+    textarea::placeholder { color: rgba(189, 181, 170, 0.55); }
+    .free textarea { min-height: 6rem; }
+    .sr {
+      position: absolute !important;
+      width: 1px; height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    .send { margin-top: 1.5rem; }
+    button {
+      width: 100%;
+      min-height: 3.4rem;
+      border: 0;
+      border-radius: 999px;
+      background: var(--gold-bright);
+      color: #1a1208;
+      font: 600 1.05rem var(--sans);
+      cursor: pointer;
+      box-shadow: 0 0.6rem 1.6rem rgba(0, 0, 0, 0.55);
+    }
+    button:active { transform: translateY(1px); }
+    .hint {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0;
+    }
+    .hint[data-state="error"] { color: var(--paper); }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <img src="../assets/brand/caribbeans-logo-white.svg" alt="Caribbean's Avenue">
+    <h1>¿Cómo quieres tu carta?</h1>
+    <p>Son 5 preguntas, menos de dos minutos. Si quieres explicar algo, cada una tiene un hueco para escribir.</p>
+  </header>
+
+  <form id="form" novalidate>
+    <fieldset data-q="primero">
+      <legend><span class="n">1 de 5</span>¿Qué tipo de cóctel quieres que salga primero?</legend>
+      <div class="options">
+        <label class="option"><input type="radio" name="primero" value="Signature">
+          <span>Signature<small>Los de la casa</small></span></label>
+        <label class="option"><input type="radio" name="primero" value="Mojitos &amp; Fresh">
+          <span>Mojitos &amp; Fresh<small>Mojitos, caipirinha, caipiroska</small></span></label>
+        <label class="option"><input type="radio" name="primero" value="Clásicos">
+          <span>Clásicos<small>Piña colada, Moscow Mule, margarita</small></span></label>
+        <label class="option"><input type="radio" name="primero" value="Sin alcohol">
+          <span>Sin alcohol<small>Mocktails</small></span></label>
+      </div>
+      <div class="note">
+        <label for="primero-nota">¿Y después? Cuéntanos el orden si lo tienes claro</label>
+        <textarea id="primero-nota" name="primero-nota" rows="1" placeholder="Opcional"></textarea>
+      </div>
+    </fieldset>
+
+    <fieldset data-q="paginas">
+      <legend><span class="n">2 de 5</span>¿Cómo quieres que se vea la carta?</legend>
+      <div class="options">
+        <label class="option"><input type="radio" name="paginas" value="Una sola página, todo seguido">
+          <span>Una sola página<small>Todo seguido, solo hay que bajar</small></span></label>
+        <label class="option"><input type="radio" name="paginas" value="Una página por sección">
+          <span>Una página por sección<small>Signature, Mojitos, Clásicos… cada una aparte</small></span></label>
+      </div>
+      <div class="note">
+        <label for="paginas-nota">Añade detalle</label>
+        <textarea id="paginas-nota" name="paginas-nota" rows="1" placeholder="Opcional"></textarea>
+      </div>
+    </fieldset>
+
+    <fieldset data-q="fotos">
+      <legend><span class="n">3 de 5</span>¿Qué fotos quieres que salgan?</legend>
+      <div class="options">
+        <label class="option"><input type="radio" name="fotos" value="Todas"> Todas</label>
+        <label class="option"><input type="radio" name="fotos" value="Solo las de Top ventas"> Solo las de Top ventas</label>
+        <label class="option"><input type="radio" name="fotos" value="Ninguna"> Ninguna</label>
+      </div>
+      <div class="note">
+        <label for="fotos-nota">Añade detalle</label>
+        <textarea id="fotos-nota" name="fotos-nota" rows="1" placeholder="Opcional"></textarea>
+      </div>
+    </fieldset>
+
+    <fieldset data-q="coctel">
+      <legend><span class="n">4 de 5</span>En los cócteles, ¿qué quieres que se lea?</legend>
+      <div class="options">
+        <label class="option"><input type="radio" name="coctel" value="Nombre y precio"> Nombre y precio</label>
+        <label class="option"><input type="radio" name="coctel" value="Nombre, precio y una línea con lo que lleva">
+          <span>Nombre, precio y lo que lleva<small>Una línea corta debajo</small></span></label>
+      </div>
+      <div class="note">
+        <label for="coctel-nota">Añade detalle</label>
+        <textarea id="coctel-nota" name="coctel-nota" rows="1" placeholder="Opcional"></textarea>
+      </div>
+    </fieldset>
+
+
+    <fieldset data-q="otros" class="free">
+      <legend><span class="n">5 de 5</span>¿Algo más que te moleste o que quieras?</legend>
+      <div class="note">
+        <label for="otros" class="sr">Escribe lo que quieras</label>
+        <textarea id="otros" name="otros" rows="3" placeholder="Opcional"></textarea>
+      </div>
+    </fieldset>
+
+    <div class="send">
+      <button type="submit">Enviar por WhatsApp</button>
+    </div>
+    <p class="hint" id="hint" aria-live="polite">Se abre WhatsApp con tus respuestas ya escritas.</p>
+  </form>
+</main>
+
+<script>
+  // Número al que llegan las respuestas (formato internacional, sin + ni espacios).
+  const PHONE = "34744481975";
+
+  const QUESTIONS = [
+    ["primero", "1. Primero en la carta"],
+    ["paginas", "2. Cómo se ve"],
+    ["fotos", "3. Fotos"],
+    ["coctel", "4. En los cócteles"],
+  ];
+  const STORE = "ca-formulario-carta";
+  const form = document.getElementById("form");
+  const hint = document.getElementById("hint");
+
+  // Guarda lo que va marcando por si cierra la pestaña a medias.
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORE) || "{}");
+    for (const [name, value] of Object.entries(saved)) {
+      const field = form.elements[name];
+      if (field) field.value = value;
+    }
+  } catch {}
+  form.addEventListener("input", () => {
+    try { localStorage.setItem(STORE, JSON.stringify(Object.fromEntries(new FormData(form)))); } catch {}
+  });
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const data = new FormData(form);
+    const val = (name) => (data.get(name) || "").toString().trim();
+
+    const lines = ["Hola Alejandro, esto es lo que quiero para la carta:", ""];
+    let answered = 0;
+    for (const [name, title] of QUESTIONS) {
+      const choice = val(name);
+      const note = val(name + "-nota");
+      if (choice || note) answered++;
+      lines.push(`*${title}:* ${choice || "—"}`);
+      if (note) lines.push(`   ${note}`);
+    }
+    const otros = val("otros");
+    if (otros) { answered++; lines.push("", "*5. Algo más:*", otros); }
+
+    if (!answered) {
+      hint.dataset.state = "error";
+      hint.textContent = "Marca al menos una respuesta antes de enviar.";
+      return;
+    }
+    hint.dataset.state = "";
+    hint.textContent = "Se abre WhatsApp con tus respuestas ya escritas.";
+    const text = encodeURIComponent(lines.join("\n"));
+    location.href = `https://wa.me/${PHONE}?text=${text}`;
+  });
+</script>
+</body>
+</html>

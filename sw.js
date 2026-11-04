@@ -89,8 +89,8 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // The editorial mode (/libro/) is still evolving: never serve it from this cache.
-  if (/\/(libro|data|tests)\//.test(url.pathname)) {
+  // The editorial mode (/libro/) is still evolving and /formulario/ is a one-off page: never serve them from this cache.
+  if (/\/(libro|data|tests|formulario)\//.test(url.pathname)) {
     return;
   }
 
