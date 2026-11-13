@@ -1,15 +1,37 @@
 <!doctype html>
-<html lang="es">
+<html lang="es" data-tarifa="tarde">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#0b0907">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#10142a">
+    <meta name="color-scheme" content="dark">
+    <meta name="description" content="Carta de Caribbean's Avenue: cócteles, copas y bebidas con precios de tarde y de noche.">
     <title>Caribbean's Avenue · Carta</title>
-    <script>location.replace("libro/" + location.search + location.hash);</script>
-    <meta http-equiv="refresh" content="0; url=libro/">
-    <style>html,body{margin:0;height:100%;background:#0b0907}</style>
+    <link rel="icon" href="assets/brand/caribbeans-logo-white.svg" type="image/svg+xml">
+    <link rel="preload" href="assets/fonts/bricolage-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="assets/cocktails/caribbeans-spritz-720.webp" as="image">
+    <link rel="stylesheet" href="carta/carta.css?v=2">
+    <script type="module" src="carta/app.js?v=2"></script>
   </head>
   <body>
-    <noscript><p style="color:#f3ece0;font-family:system-ui;padding:2rem"><a href="libro/" style="color:#d7ac67">Abrir la carta</a> · <a href="clasica.html" style="color:#d7ac67">Carta clásica</a></p></noscript>
+    <header class="bar">
+      <a class="brand" href="#top-ventas"><img src="assets/brand/caribbeans-logo-white.svg" alt="Caribbean's Avenue" width="124" height="33"></a>
+      <p class="tarifa" aria-live="polite"><span class="tarifa-name">Tarifa de tarde</span><span class="tarifa-when">hasta las 22:30</span></p>
+      <div class="lang" role="group" aria-label="Idioma">
+        <button type="button" data-lang="es" aria-pressed="true">ES</button>
+        <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <main id="carta">
+        <noscript>
+          <p class="noscript">Para ver la carta completa activa JavaScript, o abre la <a href="clasica.html">carta de cócteles</a>.</p>
+        </noscript>
+      </main>
+      <nav class="rail" aria-label="Índice de la carta"></nav>
+    </div>
+
+    <div class="bubble" aria-hidden="true"><span class="bubble-title"></span><span class="bubble-family"></span></div>
   </body>
 </html>

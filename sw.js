@@ -1,21 +1,32 @@
 // Caribbean's Avenue · offline cache
-// Bump VERSION whenever index.html, styles.css or app.js change, so phones pick up the new menu.
-const VERSION = "carta-v4";
+// Sube VERSION cada vez que cambie cualquier archivo de la carta (index, carta/*, data/*),
+// y el ?v= de index.html si cambian carta.css o app.js: así los móviles cogen la carta nueva.
+const VERSION = "carta-v5";
 const SHELL = [
   "./",
-  "clasica.html",
-  "styles.css?v=3",
-  "app.js?v=3",
+  "carta/carta.css?v=2",
+  "carta/app.js?v=2",
+  "carta/source.js",
+  "carta/remote.js",
+  "carta/glasses.js",
+  "carta/banner.js",
+  "carta/rail.js",
+  "data/carta.js",
+  "data/bebidas.js",
+  "assets/fonts/bricolage-latin.woff2",
   "assets/brand/caribbeans-logo-white.svg",
-  "assets/fonts/cormorant.woff2",
-  "assets/img/dedo.webp",
 ];
-// Page photos: saved too, but a failure here must not block the menu itself.
+// Fotos y extras: también se guardan, pero si alguno falla la carta funciona igual.
 const PHOTOS = [
-  "assets/img/portada-828.webp",
-  "assets/img/copa-828.webp",
-  "assets/img/mojito-828.webp",
-  "assets/img/playa-828.webp",
+  "assets/fonts/bricolage-latin-ext.woff2",
+  "assets/cocktails/caribbeans-spritz-720.webp",
+  "assets/cocktails/porn-star-martini-720.webp",
+  "assets/cocktails/mojito-frutas-720.webp",
+  "assets/cocktails/mojito-clasico-720.webp",
+  "assets/cocktails/caribbeans-spritz-280.webp",
+  "assets/cocktails/porn-star-martini-280.webp",
+  "assets/cocktails/mojito-frutas-280.webp",
+  "assets/cocktails/mojito-clasico-280.webp",
 ];
 
 self.addEventListener("install", (event) => {
@@ -58,7 +69,7 @@ async function pageResponse(request) {
     // Offline or network error: use the saved copy below.
   }
 
-  const cached = (await cache.match(request, { ignoreSearch: true })) || (await cache.match("clasica.html"));
+  const cached = (await cache.match(request, { ignoreSearch: true })) || (await cache.match("./"));
   return cached || network;
 }
 
@@ -89,8 +100,9 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // The editorial mode (/libro/) is still evolving and /formulario/ is a one-off page: never serve them from this cache.
-  if (/\/(libro|data|tests|formulario)\//.test(url.pathname)) {
+  // El modo libro (/libro/) sigue cambiando y /formulario/ es de un solo uso: nunca salen de esta caché.
+  // data/ sí se guarda: la carta lo importa y tiene que abrir sin cobertura.
+  if (/\/(libro|tests|formulario)\//.test(url.pathname)) {
     return;
   }
 

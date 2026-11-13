@@ -1,0 +1,1329 @@
+{
+  "fuente": "Carta_Avenue_paginas_2_a_5.xlsm",
+  "corte": "22:30",
+  "families": [
+    {
+      "id": "cervezas-vinos",
+      "title": {
+        "es": "Cervezas y vinos",
+        "en": "Beer & wine"
+      },
+      "sections": [
+        {
+          "id": "cerveza",
+          "title": {
+            "es": "Cervezas",
+            "en": "Beer"
+          },
+          "products": [
+            {
+              "id": "cerveza-estrella-galicia-13",
+              "name": {
+                "es": "Estrella Galicia ⅓",
+                "en": "Estrella Galicia ⅓"
+              },
+              "tarde": 4,
+              "noche": 5
+            },
+            {
+              "id": "cerveza-estrella-galicia-13-sin-alcohol",
+              "name": {
+                "es": "Estrella Galicia ⅓ sin alcohol",
+                "en": "Estrella Galicia ⅓ alcohol-free"
+              },
+              "tarde": 4,
+              "noche": 5
+            },
+            {
+              "id": "cerveza-heineken",
+              "name": {
+                "es": "Heineken",
+                "en": "Heineken"
+              },
+              "tarde": 4,
+              "noche": 5
+            },
+            {
+              "id": "cerveza-coronita",
+              "name": {
+                "es": "Coronita",
+                "en": "Coronita"
+              },
+              "tarde": 5,
+              "noche": 5
+            },
+            {
+              "id": "cerveza-desperados",
+              "name": {
+                "es": "Desperados",
+                "en": "Desperados"
+              },
+              "tarde": 5,
+              "noche": 5
+            },
+            {
+              "id": "cerveza-radler",
+              "name": {
+                "es": "Radler",
+                "en": "Radler"
+              },
+              "tarde": 4,
+              "noche": 4
+            },
+            {
+              "id": "cerveza-doble",
+              "name": {
+                "es": "Doble",
+                "en": "Doble (large draught)"
+              },
+              "tarde": 4,
+              "noche": 5
+            },
+            {
+              "id": "cerveza-pinta",
+              "name": {
+                "es": "Pinta",
+                "en": "Pint"
+              },
+              "tarde": 6,
+              "noche": 7
+            },
+            {
+              "id": "cerveza-estrella-1906",
+              "name": {
+                "es": "Estrella 1906",
+                "en": "Estrella 1906"
+              },
+              "tarde": 5,
+              "noche": 5
+            }
+          ]
+        },
+        {
+          "id": "sangria-y-agua-de-valencia",
+          "title": {
+            "es": "Sangría y Agua de Valencia",
+            "en": "Sangria & Agua de Valencia"
+          },
+          "products": [
+            {
+              "id": "sangria-y-agua-de-valencia-sangria-copa",
+              "name": {
+                "es": "Sangría, copa",
+                "en": "Sangria, glass"
+              },
+              "tarde": 6,
+              "noche": 7
+            },
+            {
+              "id": "sangria-y-agua-de-valencia-sangrias",
+              "name": {
+                "es": "Sangrías",
+                "en": "Sangrias"
+              },
+              "tarde": 35,
+              "noche": 35
+            },
+            {
+              "id": "sangria-y-agua-de-valencia-agua-de-valencia-copa",
+              "name": {
+                "es": "Agua de Valencia, copa",
+                "en": "Agua de Valencia, glass"
+              },
+              "tarde": 9,
+              "noche": 9
+            }
+          ]
+        },
+        {
+          "id": "vino",
+          "title": {
+            "es": "Vinos",
+            "en": "Wine"
+          },
+          "products": [
+            {
+              "id": "vino-vino-blanco-copa",
+              "name": {
+                "es": "Vino blanco, copa",
+                "en": "White wine, glass"
+              },
+              "tarde": 4,
+              "noche": 5
+            },
+            {
+              "id": "vino-vino-tinto-copa",
+              "name": {
+                "es": "Vino tinto, copa",
+                "en": "Red wine, glass"
+              },
+              "tarde": 4,
+              "noche": 5
+            },
+            {
+              "id": "vino-vino-blanco-botella",
+              "name": {
+                "es": "Vino blanco, botella",
+                "en": "White wine, bottle"
+              },
+              "tarde": 20,
+              "noche": 30
+            },
+            {
+              "id": "vino-vino-tinto-botella",
+              "name": {
+                "es": "Vino tinto, botella",
+                "en": "Red wine, bottle"
+              },
+              "tarde": 20,
+              "noche": 30
+            }
+          ]
+        },
+        {
+          "id": "vermut",
+          "title": {
+            "es": "Vermut",
+            "en": "Vermouth"
+          },
+          "products": [
+            {
+              "id": "vermut-vermut-blanco",
+              "name": {
+                "es": "Vermut blanco",
+                "en": "White vermouth"
+              },
+              "tarde": 5,
+              "noche": 6
+            },
+            {
+              "id": "vermut-vermut-tinto",
+              "name": {
+                "es": "Vermut tinto",
+                "en": "Red vermouth"
+              },
+              "tarde": 5,
+              "noche": 6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "champagne",
+      "title": {
+        "es": "Champagne",
+        "en": "Champagne"
+      },
+      "sections": [
+        {
+          "id": "champagne",
+          "title": {
+            "es": "Champagne",
+            "en": "Champagne"
+          },
+          "products": [
+            {
+              "id": "champagne-moet-imperial-brut",
+              "name": {
+                "es": "Moët Impérial Brut",
+                "en": "Moët Impérial Brut"
+              },
+              "tarde": 100,
+              "noche": 120
+            },
+            {
+              "id": "champagne-moet-ice-imperial",
+              "name": {
+                "es": "Moët Ice Impérial",
+                "en": "Moët Ice Impérial"
+              },
+              "tarde": 130,
+              "noche": 160
+            },
+            {
+              "id": "champagne-moet-rose-imperial",
+              "name": {
+                "es": "Moët Rosé Impérial",
+                "en": "Moët Rosé Impérial"
+              },
+              "tarde": 120,
+              "noche": 140
+            },
+            {
+              "id": "champagne-moet-n-i-r",
+              "name": {
+                "es": "Moët N.I.R.",
+                "en": "Moët N.I.R."
+              },
+              "tarde": 150,
+              "noche": 180
+            },
+            {
+              "id": "champagne-dom-perignon",
+              "name": {
+                "es": "Dom Pérignon",
+                "en": "Dom Pérignon"
+              },
+              "tarde": 320,
+              "noche": 350
+            },
+            {
+              "id": "champagne-dom-perignon-luminous",
+              "name": {
+                "es": "Dom Pérignon Luminous",
+                "en": "Dom Pérignon Luminous"
+              },
+              "tarde": 380,
+              "noche": 400
+            }
+          ],
+          "note": {
+            "es": "Precio por botella",
+            "en": "Price per bottle"
+          }
+        }
+      ]
+    },
+    {
+      "id": "copas",
+      "title": {
+        "es": "Copas",
+        "en": "Spirits"
+      },
+      "sections": [
+        {
+          "id": "ginebras",
+          "title": {
+            "es": "Ginebras",
+            "en": "Gin"
+          },
+          "products": [
+            {
+              "id": "ginebras-master-s",
+              "name": {
+                "es": "Master's",
+                "en": "Master's"
+              },
+              "tarde": 8,
+              "noche": 10
+            },
+            {
+              "id": "ginebras-master-s-pink",
+              "name": {
+                "es": "Master's Pink",
+                "en": "Master's Pink"
+              },
+              "tarde": 8,
+              "noche": 10
+            },
+            {
+              "id": "ginebras-larios-12",
+              "name": {
+                "es": "Larios 12",
+                "en": "Larios 12"
+              },
+              "tarde": 8,
+              "noche": 10
+            },
+            {
+              "id": "ginebras-larios-rose-pomelo",
+              "name": {
+                "es": "Larios Rosé / Pomelo",
+                "en": "Larios Rosé / Grapefruit"
+              },
+              "tarde": 8,
+              "noche": 10
+            },
+            {
+              "id": "ginebras-puerto-de-indias-rose-melon",
+              "name": {
+                "es": "Puerto de Indias Rosé / Melón",
+                "en": "Puerto de Indias Rosé / Melon"
+              },
+              "tarde": 8,
+              "noche": 10
+            },
+            {
+              "id": "ginebras-tanqueray",
+              "name": {
+                "es": "Tanqueray",
+                "en": "Tanqueray"
+              },
+              "tarde": 8,
+              "noche": 10
+            },
+            {
+              "id": "ginebras-tanqueray-0-0",
+              "name": {
+                "es": "Tanqueray 0,0",
+                "en": "Tanqueray 0.0"
+              },
+              "tarde": 8,
+              "noche": 10
+            }
+          ]
+        },
+        {
+          "id": "ginebras-premium",
+          "title": {
+            "es": "Ginebras premium",
+            "en": "Premium gin"
+          },
+          "products": [
+            {
+              "id": "ginebras-premium-gin-vlc",
+              "name": {
+                "es": "Gin VLC",
+                "en": "Gin VLC"
+              },
+              "tarde": 10,
+              "noche": 12
+            },
+            {
+              "id": "ginebras-premium-bulldog",
+              "name": {
+                "es": "Bulldog",
+                "en": "Bulldog"
+              },
+              "tarde": 10,
+              "noche": 12
+            },
+            {
+              "id": "ginebras-premium-brockmans",
+              "name": {
+                "es": "Brockmans",
+                "en": "Brockmans"
+              },
+              "tarde": 10,
+              "noche": 12
+            },
+            {
+              "id": "ginebras-premium-jinzu",
+              "name": {
+                "es": "Jinzu",
+                "en": "Jinzu"
+              },
+              "tarde": 10,
+              "noche": 12
+            },
+            {
+              "id": "ginebras-premium-roku",
+              "name": {
+                "es": "Roku",
+                "en": "Roku"
+              },
+              "tarde": 10,
+              "noche": 12
+            },
+            {
+              "id": "ginebras-premium-g-vine",
+              "name": {
+                "es": "G'Vine",
+                "en": "G'Vine"
+              },
+              "tarde": 10,
+              "noche": 12
+            },
+            {
+              "id": "ginebras-premium-hendrick-s",
+              "name": {
+                "es": "Hendrick's",
+                "en": "Hendrick's"
+              },
+              "tarde": 10,
+              "noche": 12
+            },
+            {
+              "id": "ginebras-premium-martin-miller-s",
+              "name": {
+                "es": "Martin Miller's",
+                "en": "Martin Miller's"
+              },
+              "tarde": 10,
+              "noche": 12
+            },
+            {
+              "id": "ginebras-premium-sipsmith",
+              "name": {
+                "es": "Sipsmith",
+                "en": "Sipsmith"
+              },
+              "tarde": 10,
+              "noche": 12
+            },
+            {
+              "id": "ginebras-premium-nordes",
+              "name": {
+                "es": "Nordés",
+                "en": "Nordés"
+              },
+              "tarde": 10,
+              "noche": 12
+            },
+            {
+              "id": "ginebras-premium-monkey-47",
+              "name": {
+                "es": "Monkey 47",
+                "en": "Monkey 47"
+              },
+              "tarde": 12,
+              "noche": 15
+            },
+            {
+              "id": "ginebras-premium-gin-mare",
+              "name": {
+                "es": "Gin Mare",
+                "en": "Gin Mare"
+              },
+              "tarde": 10,
+              "noche": 12
+            }
+          ]
+        },
+        {
+          "id": "ron",
+          "title": {
+            "es": "Ron",
+            "en": "Rum"
+          },
+          "products": [
+            {
+              "id": "ron-brugal",
+              "name": {
+                "es": "Brugal",
+                "en": "Brugal"
+              },
+              "tarde": 8,
+              "noche": 10
+            },
+            {
+              "id": "ron-flor-de-cana-5-anos",
+              "name": {
+                "es": "Flor de Caña 5 años",
+                "en": "Flor de Caña 5 years"
+              },
+              "tarde": 8,
+              "noche": 10
+            },
+            {
+              "id": "ron-barcelo",
+              "name": {
+                "es": "Barceló",
+                "en": "Barceló"
+              },
+              "tarde": 8,
+              "noche": 10
+            },
+            {
+              "id": "ron-abuelo",
+              "name": {
+                "es": "Abuelo",
+                "en": "Abuelo"
+              },
+              "tarde": 8,
+              "noche": 10
+            },
+            {
+              "id": "ron-bacardi-blanco",
+              "name": {
+                "es": "Bacardí blanco",
+                "en": "Bacardí white rum"
+              },
+              "tarde": 8,
+              "noche": 10
+            }
+          ]
+        },
+        {
+          "id": "ron-premium",
+          "title": {
+            "es": "Ron premium",
+            "en": "Premium rum"
+          },
+          "products": [
+            {
+              "id": "ron-premium-brugal-1888",
+              "name": {
+                "es": "Brugal 1888",
+                "en": "Brugal 1888"
+              },
+              "tarde": 11,
+              "noche": 13
+            },
+            {
+              "id": "ron-premium-flor-de-cana-12",
+              "name": {
+                "es": "Flor de Caña 12",
+                "en": "Flor de Caña 12"
+              },
+              "tarde": 11,
+              "noche": 13
+            },
+            {
+              "id": "ron-premium-zacapa-23",
+              "name": {
+                "es": "Zacapa 23",
+                "en": "Zacapa 23"
+              },
+              "tarde": 12,
+              "noche": 15
+            },
+            {
+              "id": "ron-premium-barcelo-imperial",
+              "name": {
+                "es": "Barceló Imperial",
+                "en": "Barceló Imperial"
+              },
+              "tarde": 11,
+              "noche": 13
+            },
+            {
+              "id": "ron-premium-diplomatico",
+              "name": {
+                "es": "Diplomático",
+                "en": "Diplomático"
+              },
+              "tarde": 12,
+              "noche": 15
+            }
+          ]
+        },
+        {
+          "id": "whiskey",
+          "title": {
+            "es": "Whiskey",
+            "en": "Whiskey"
+          },
+          "products": [
+            {
+              "id": "whiskey-j-b",
+              "name": {
+                "es": "J&B",
+                "en": "J&B"
+              },
+              "tarde": 8,
+              "noche": 10
+            },
+            {
+              "id": "whiskey-white-label",
+              "name": {
+                "es": "White Label",
+                "en": "White Label"
+              },
+              "tarde": 8,
+              "noche": 10
+            },
+            {
+              "id": "whiskey-bold",
+              "name": {
+                "es": "Bold",
+                "en": "Bold"
+              },
+              "tarde": 8,
+              "noche": 10
+            },
+            {
+              "id": "whiskey-red-label",
+              "name": {
+                "es": "Red Label",
+                "en": "Red Label"
+              },
+              "tarde": 9,
+              "noche": 11
+            },
+            {
+              "id": "whiskey-dyc",
+              "name": {
+                "es": "DYC",
+                "en": "DYC"
+              },
+              "tarde": 8,
+              "noche": 10
+            },
+            {
+              "id": "whiskey-dyc-8-anos",
+              "name": {
+                "es": "DYC 8 años",
+                "en": "DYC 8 years"
+              },
+              "tarde": 9,
+              "noche": 11
+            },
+            {
+              "id": "whiskey-100-pipers",
+              "name": {
+                "es": "100 Pipers",
+                "en": "100 Pipers"
+              },
+              "tarde": 8,
+              "noche": 10
+            },
+            {
+              "id": "whiskey-four-roses",
+              "name": {
+                "es": "Four Roses",
+                "en": "Four Roses"
+              },
+              "tarde": 8,
+              "noche": 10
+            },
+            {
+              "id": "whiskey-jim-beam",
+              "name": {
+                "es": "Jim Beam",
+                "en": "Jim Beam"
+              },
+              "tarde": 8,
+              "noche": 10
+            },
+            {
+              "id": "whiskey-jameson",
+              "name": {
+                "es": "Jameson",
+                "en": "Jameson"
+              },
+              "tarde": 8,
+              "noche": 10
+            },
+            {
+              "id": "whiskey-jack-daniel-s",
+              "name": {
+                "es": "Jack Daniel's",
+                "en": "Jack Daniel's"
+              },
+              "tarde": 10,
+              "noche": 12
+            },
+            {
+              "id": "whiskey-jack-daniel-s-apple",
+              "name": {
+                "es": "Jack Daniel's Apple",
+                "en": "Jack Daniel's Apple"
+              },
+              "tarde": 10,
+              "noche": 12
+            },
+            {
+              "id": "whiskey-jack-daniel-s-fire",
+              "name": {
+                "es": "Jack Daniel's Fire",
+                "en": "Jack Daniel's Fire"
+              },
+              "tarde": 10,
+              "noche": 12
+            },
+            {
+              "id": "whiskey-jack-daniel-s-honey",
+              "name": {
+                "es": "Jack Daniel's Honey",
+                "en": "Jack Daniel's Honey"
+              },
+              "tarde": 10,
+              "noche": 12
+            }
+          ]
+        },
+        {
+          "id": "whiskey-premium",
+          "title": {
+            "es": "Whiskey premium",
+            "en": "Premium whiskey"
+          },
+          "products": [
+            {
+              "id": "whiskey-premium-cardhu-12-anos",
+              "name": {
+                "es": "Cardhu 12 años",
+                "en": "Cardhu 12 years"
+              },
+              "tarde": 10,
+              "noche": 12
+            },
+            {
+              "id": "whiskey-premium-maker-s-mark",
+              "name": {
+                "es": "Maker's Mark",
+                "en": "Maker's Mark"
+              },
+              "tarde": 10,
+              "noche": 12
+            },
+            {
+              "id": "whiskey-premium-knockando",
+              "name": {
+                "es": "Knockando",
+                "en": "Knockando"
+              },
+              "tarde": 12,
+              "noche": 15
+            },
+            {
+              "id": "whiskey-premium-lagavulin",
+              "name": {
+                "es": "Lagavulin",
+                "en": "Lagavulin"
+              },
+              "tarde": 16,
+              "noche": 18
+            },
+            {
+              "id": "whiskey-premium-talisker",
+              "name": {
+                "es": "Talisker",
+                "en": "Talisker"
+              },
+              "tarde": 13,
+              "noche": 15
+            },
+            {
+              "id": "whiskey-premium-oban",
+              "name": {
+                "es": "Oban",
+                "en": "Oban"
+              },
+              "tarde": 13,
+              "noche": 15
+            },
+            {
+              "id": "whiskey-premium-bulleit-bourbon",
+              "name": {
+                "es": "Bulleit Bourbon",
+                "en": "Bulleit Bourbon"
+              },
+              "tarde": 11,
+              "noche": 13
+            },
+            {
+              "id": "whiskey-premium-macallan-12-anos",
+              "name": {
+                "es": "Macallan 12 años",
+                "en": "Macallan 12 years"
+              },
+              "tarde": 15,
+              "noche": 18
+            },
+            {
+              "id": "whiskey-premium-black-label",
+              "name": {
+                "es": "Black Label",
+                "en": "Black Label"
+              },
+              "tarde": 11,
+              "noche": 13
+            },
+            {
+              "id": "whiskey-premium-glenrothes",
+              "name": {
+                "es": "Glenrothes",
+                "en": "Glenrothes"
+              },
+              "tarde": 12,
+              "noche": 13
+            },
+            {
+              "id": "whiskey-premium-gold-label",
+              "name": {
+                "es": "Gold Label",
+                "en": "Gold Label"
+              },
+              "tarde": 12,
+              "noche": 15
+            },
+            {
+              "id": "whiskey-premium-blue-label",
+              "name": {
+                "es": "Blue Label",
+                "en": "Blue Label"
+              },
+              "tarde": 40,
+              "noche": 40
+            }
+          ],
+          "note": {
+            "es": "Precio por copa",
+            "en": "Price per glass"
+          }
+        },
+        {
+          "id": "vodka",
+          "title": {
+            "es": "Vodka",
+            "en": "Vodka"
+          },
+          "products": [
+            {
+              "id": "vodka-skyy",
+              "name": {
+                "es": "Skyy",
+                "en": "Skyy"
+              },
+              "tarde": 8,
+              "noche": 10
+            },
+            {
+              "id": "vodka-moskovskaya",
+              "name": {
+                "es": "Moskovskaya",
+                "en": "Moskovskaya"
+              },
+              "tarde": 8,
+              "noche": 10
+            }
+          ]
+        },
+        {
+          "id": "vodka-premium",
+          "title": {
+            "es": "Vodka premium",
+            "en": "Premium vodka"
+          },
+          "products": [
+            {
+              "id": "vodka-premium-ciroc",
+              "name": {
+                "es": "Cîroc",
+                "en": "Cîroc"
+              },
+              "tarde": 10,
+              "noche": 11
+            },
+            {
+              "id": "vodka-premium-ciroc-sabores",
+              "name": {
+                "es": "Cîroc sabores",
+                "en": "Cîroc flavours"
+              },
+              "tarde": 10,
+              "noche": 11
+            },
+            {
+              "id": "vodka-premium-belvedere",
+              "name": {
+                "es": "Belvedere",
+                "en": "Belvedere"
+              },
+              "tarde": 11,
+              "noche": 12
+            },
+            {
+              "id": "vodka-premium-vodka-premium-o-similar",
+              "name": {
+                "es": "Vodka premium o similar",
+                "en": "Premium vodka or similar"
+              },
+              "tarde": 10,
+              "noche": 11
+            }
+          ]
+        },
+        {
+          "id": "tequila",
+          "title": {
+            "es": "Tequila",
+            "en": "Tequila"
+          },
+          "products": [
+            {
+              "id": "tequila-tequila",
+              "name": {
+                "es": "Tequila",
+                "en": "Tequila"
+              },
+              "tarde": 9,
+              "noche": 10
+            },
+            {
+              "id": "tequila-tequila-premium",
+              "name": {
+                "es": "Tequila premium",
+                "en": "Premium tequila"
+              },
+              "tarde": 10,
+              "noche": 12
+            },
+            {
+              "id": "tequila-tequila-de-sabores",
+              "name": {
+                "es": "Tequila de sabores",
+                "en": "Flavoured tequila"
+              },
+              "tarde": 6,
+              "noche": 8
+            },
+            {
+              "id": "tequila-chupito-don-julio-patron",
+              "name": {
+                "es": "Chupito Don Julio / Patrón",
+                "en": "Don Julio / Patrón shot"
+              },
+              "tarde": 6,
+              "noche": 7
+            }
+          ]
+        },
+        {
+          "id": "cognac",
+          "title": {
+            "es": "Cognac",
+            "en": "Cognac"
+          },
+          "products": [
+            {
+              "id": "cognac-cognac",
+              "name": {
+                "es": "Cognac",
+                "en": "Cognac"
+              },
+              "tarde": 5,
+              "noche": 5
+            },
+            {
+              "id": "cognac-cognac-premium-o-similar",
+              "name": {
+                "es": "Cognac premium o similar",
+                "en": "Premium cognac or similar"
+              },
+              "tarde": 8,
+              "noche": 10
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "licores",
+      "title": {
+        "es": "Licores y chupitos",
+        "en": "Liqueurs & shots"
+      },
+      "sections": [
+        {
+          "id": "licores",
+          "title": {
+            "es": "Licores",
+            "en": "Liqueurs"
+          },
+          "products": [
+            {
+              "id": "licores-baileys",
+              "name": {
+                "es": "Baileys",
+                "en": "Baileys"
+              },
+              "tarde": 6,
+              "noche": 7
+            },
+            {
+              "id": "licores-campari",
+              "name": {
+                "es": "Campari",
+                "en": "Campari"
+              },
+              "tarde": 6,
+              "noche": 7
+            },
+            {
+              "id": "licores-licor-de-avellana",
+              "name": {
+                "es": "Licor de avellana",
+                "en": "Hazelnut liqueur"
+              },
+              "tarde": 7,
+              "noche": 8
+            },
+            {
+              "id": "licores-tia-maria",
+              "name": {
+                "es": "Tia Maria",
+                "en": "Tia Maria"
+              },
+              "tarde": 7,
+              "noche": 8
+            },
+            {
+              "id": "licores-jagermeister-copa",
+              "name": {
+                "es": "Jägermeister, copa",
+                "en": "Jägermeister, glass"
+              },
+              "tarde": 9,
+              "noche": 11
+            },
+            {
+              "id": "licores-jagermeister-red-bull-copa",
+              "name": {
+                "es": "Jägermeister + Red Bull, copa",
+                "en": "Jägermeister + Red Bull, glass"
+              },
+              "tarde": 10,
+              "noche": 12
+            },
+            {
+              "id": "licores-licor-43",
+              "name": {
+                "es": "Licor 43",
+                "en": "Licor 43"
+              },
+              "tarde": 9,
+              "noche": 10
+            },
+            {
+              "id": "licores-malibu",
+              "name": {
+                "es": "Malibu",
+                "en": "Malibu"
+              },
+              "tarde": 9,
+              "noche": 10
+            },
+            {
+              "id": "licores-pacharan-zoco",
+              "name": {
+                "es": "Pacharán Zoco",
+                "en": "Pacharán Zoco"
+              },
+              "tarde": 6,
+              "noche": 7
+            },
+            {
+              "id": "licores-ponche-caballero",
+              "name": {
+                "es": "Ponche Caballero",
+                "en": "Ponche Caballero"
+              },
+              "tarde": 6,
+              "noche": 7
+            },
+            {
+              "id": "licores-thunder",
+              "name": {
+                "es": "Thunder",
+                "en": "Thunder"
+              },
+              "tarde": 8,
+              "noche": 8
+            },
+            {
+              "id": "licores-vodka-rojo-azul",
+              "name": {
+                "es": "Vodka rojo / azul",
+                "en": "Red / blue vodka"
+              },
+              "tarde": 6,
+              "noche": 8
+            },
+            {
+              "id": "licores-cazalla",
+              "name": {
+                "es": "Cazalla",
+                "en": "Cazalla"
+              },
+              "tarde": 8,
+              "noche": 9
+            }
+          ]
+        },
+        {
+          "id": "chupitos",
+          "title": {
+            "es": "Chupitos",
+            "en": "Shots"
+          },
+          "products": [
+            {
+              "id": "chupitos-chupito-normal-vodka-azul-rojo",
+              "name": {
+                "es": "Chupito normal (vodka azul, rojo…)",
+                "en": "Regular shot (blue, red vodka…)"
+              },
+              "tarde": 3,
+              "noche": 4
+            },
+            {
+              "id": "chupitos-chupito-especial-tequila-jagermeister",
+              "name": {
+                "es": "Chupito especial (tequila, Jägermeister…)",
+                "en": "Special shot (tequila, Jägermeister…)"
+              },
+              "tarde": 4,
+              "noche": 5
+            },
+            {
+              "id": "chupitos-chupito-premium",
+              "name": {
+                "es": "Chupito premium",
+                "en": "Premium shot"
+              },
+              "tarde": 6,
+              "noche": 6,
+              "desde": true,
+              "note": {
+                "es": "Consultar al personal",
+                "en": "Ask our staff"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "refrescos",
+      "title": {
+        "es": "Refrescos y zumos",
+        "en": "Soft drinks"
+      },
+      "sections": [
+        {
+          "id": "refrescos",
+          "title": {
+            "es": "Refrescos",
+            "en": "Soft drinks"
+          },
+          "products": [
+            {
+              "id": "refrescos-agua",
+              "name": {
+                "es": "Agua",
+                "en": "Water"
+              },
+              "tarde": 3,
+              "noche": 3
+            },
+            {
+              "id": "refrescos-agua-con-gas",
+              "name": {
+                "es": "Agua con gas",
+                "en": "Sparkling water"
+              },
+              "tarde": 3,
+              "noche": 4
+            },
+            {
+              "id": "refrescos-pepsi",
+              "name": {
+                "es": "Pepsi",
+                "en": "Pepsi"
+              },
+              "tarde": 3,
+              "noche": 4
+            },
+            {
+              "id": "refrescos-pepsi-zero",
+              "name": {
+                "es": "Pepsi Zero",
+                "en": "Pepsi Zero"
+              },
+              "tarde": 3,
+              "noche": 4
+            },
+            {
+              "id": "refrescos-schweppes-limon",
+              "name": {
+                "es": "Schweppes limón",
+                "en": "Schweppes lemon"
+              },
+              "tarde": 3,
+              "noche": 4
+            },
+            {
+              "id": "refrescos-schweppes-naranja",
+              "name": {
+                "es": "Schweppes naranja",
+                "en": "Schweppes orange"
+              },
+              "tarde": 3,
+              "noche": 4
+            },
+            {
+              "id": "refrescos-seven-up",
+              "name": {
+                "es": "Seven Up",
+                "en": "Seven Up"
+              },
+              "tarde": 3,
+              "noche": 4
+            },
+            {
+              "id": "refrescos-schweppes-tonica",
+              "name": {
+                "es": "Schweppes tónica",
+                "en": "Schweppes tonic"
+              },
+              "tarde": 3,
+              "noche": 4
+            },
+            {
+              "id": "refrescos-schweppes-berry",
+              "name": {
+                "es": "Schweppes Berry",
+                "en": "Schweppes Berry"
+              },
+              "tarde": 3,
+              "noche": 4
+            },
+            {
+              "id": "refrescos-schweppes-ginger-ale-ginger-beer",
+              "name": {
+                "es": "Schweppes Ginger Ale / Ginger Beer",
+                "en": "Schweppes Ginger Ale / Ginger Beer"
+              },
+              "tarde": 3,
+              "noche": 4
+            },
+            {
+              "id": "refrescos-lipton",
+              "name": {
+                "es": "Lipton",
+                "en": "Lipton"
+              },
+              "tarde": 3,
+              "noche": 4
+            },
+            {
+              "id": "refrescos-aquarade-naranja-o-limon",
+              "name": {
+                "es": "Aquarade naranja o limón",
+                "en": "Aquarade orange or lemon"
+              },
+              "tarde": 3,
+              "noche": 4
+            },
+            {
+              "id": "refrescos-red-bull-sugarfree-sabores",
+              "name": {
+                "es": "Red Bull / Sugarfree / sabores",
+                "en": "Red Bull / Sugarfree / flavours"
+              },
+              "tarde": 4,
+              "noche": 5
+            }
+          ]
+        },
+        {
+          "id": "zumos",
+          "title": {
+            "es": "Zumos",
+            "en": "Juices"
+          },
+          "products": [
+            {
+              "id": "zumos-zumo-de-pina-melocoton-o-naranja",
+              "name": {
+                "es": "Zumo de piña, melocotón o naranja",
+                "en": "Pineapple, peach or orange juice"
+              },
+              "tarde": 3,
+              "noche": 4
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "notasExcel": [
+    "Consultar precios especiales para grupos cerrados. Precios por botella a consultar a nuestro personal.",
+    "Los precios tarde no son aplicables a días con actividades contratadas: Afterwork, tardeos, conciertos, sesiones de baile",
+    "Algunos productos pueden contener lactosa. Consultar al personal por los alérgenos."
+  ]
+}

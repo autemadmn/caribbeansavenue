@@ -9,6 +9,8 @@
 // - Textos EN: traducción de trabajo, PENDIENTE DE REVISAR por el local.
 // - `experience`: microescena opcional de la ficha. Solo bebidas que se sirven con hielo.
 //   glass: "highball" | "rocks" | "wine". liquid: [color superficie, color fondo].
+// - Carta de una página: `glass` (silueta si no hay foto), `tint` (color de la bebida) y
+//   `cutout` (nombre base de la foto recortada en assets/cocktails/, o null si aún no hay).
 
 const ice = (glass, liquid) => ({ type: "ice", glass, liquid });
 
@@ -38,6 +40,9 @@ export default {
       products: [
         {
           id: "caribbeans-spritz",
+          glass: "wine",
+          tint: "#F39A45",
+          cutout: "caribbeans-spritz",
           name: { es: "Caribbean's Spritz", en: "Caribbean's Spritz" },
           description: {
             es: "Nuestro spritz con un toque de maracuyá, lima y ginger beer.",
@@ -56,6 +61,9 @@ export default {
         },
         {
           id: "porn-star-martini",
+          glass: "coupe",
+          tint: "#F0A33A",
+          cutout: "porn-star-martini",
           name: { es: "Porn Star Martini", en: "Porn Star Martini" },
           description: {
             es: "Vodka, maracuyá, vainilla, lima y shot de cava.",
@@ -84,6 +92,9 @@ export default {
       products: [
         {
           id: "mojito-clasico",
+          glass: "highball",
+          tint: "#DCE6A6",
+          cutout: "mojito-clasico",
           name: { es: "Mojito Clásico", en: "Classic Mojito" },
           description: {
             es: "Ron, hierbabuena, lima, azúcar y soda.",
@@ -103,6 +114,9 @@ export default {
         },
         {
           id: "mojito-frutas",
+          glass: "highball",
+          tint: "#E8697A",
+          cutout: "mojito-frutas",
           name: { es: "Mojito Frutas", en: "Fruit Mojito" },
           description: { es: "El clásico, con frutas.", en: "The classic, with fruit." },
           price: 10,
@@ -121,6 +135,9 @@ export default {
         },
         {
           id: "caipirinha",
+          glass: "rocks",
+          tint: "#ECEFC9",
+          cutout: null,
           name: { es: "Caipirinha", en: "Caipirinha" },
           description: { es: "Cachaza, lima y azúcar.", en: "Cachaça, lime and sugar." },
           price: 10,
@@ -135,6 +152,9 @@ export default {
         },
         {
           id: "caipiroska",
+          glass: "rocks",
+          tint: "#EFF0DA",
+          cutout: null,
           name: { es: "Caipiroska", en: "Caipiroska" },
           description: { es: "Vodka, lima y azúcar.", en: "Vodka, lime and sugar." },
           price: 10,
@@ -157,6 +177,9 @@ export default {
       products: [
         {
           id: "pina-colada",
+          glass: "hurricane",
+          tint: "#F4E7C6",
+          cutout: null,
           name: { es: "Piña Colada", en: "Piña Colada" },
           description: { es: "Ron, piña y coco.", en: "Rum, pineapple and coconut." },
           price: 10,
@@ -171,6 +194,9 @@ export default {
         },
         {
           id: "moscow-mule",
+          glass: "mug",
+          tint: "#D8C79B",
+          cutout: null,
           name: { es: "Moscow Mule", en: "Moscow Mule" },
           description: {
             es: "Vodka, lima, azúcar y ginger beer.",
@@ -189,6 +215,9 @@ export default {
         },
         {
           id: "margarita",
+          glass: "margarita",
+          tint: "#E6E4A8",
+          cutout: null,
           name: { es: "Margarita", en: "Margarita" },
           description: { es: "Tequila, triple sec y lima.", en: "Tequila, triple sec and lime." },
           price: 12,
@@ -211,6 +240,9 @@ export default {
       products: [
         {
           id: "matcha-mojito",
+          glass: "highball",
+          tint: "#A9C46A",
+          cutout: null,
           name: { es: "Matcha Mojito", en: "Matcha Mojito" },
           description: {
             es: "Un mojito con el sabor del matcha y ginger beer.",
@@ -227,6 +259,9 @@ export default {
         },
         {
           id: "pina-colada-sin",
+          glass: "hurricane",
+          tint: "#F6E9C2",
+          cutout: null,
           name: { es: "Piña Colada", en: "Piña Colada" },
           description: { es: "La mezcla perfecta de coco y piña.", en: "The perfect blend of coconut and pineapple." },
           price: 8,
@@ -240,6 +275,9 @@ export default {
         },
         {
           id: "caribeno",
+          glass: "highball",
+          tint: "#F4A43A",
+          cutout: null,
           name: { es: "Caribeño", en: "Caribeño" },
           description: { es: "El sabor del mango y el maracuyá.", en: "The taste of mango and passion fruit." },
           price: 8,

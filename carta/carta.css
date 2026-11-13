@@ -1,0 +1,901 @@
+/* Caribbean's Avenue · carta de una página
+   Noche de avenida, marfil cálido y un acento que cambia con la hora:
+   ámbar de atardecer con la tarifa de tarde, azul luna con la de noche. */
+
+@font-face {
+  font-family: "Bricolage Grotesque";
+  src: url("../assets/fonts/bricolage-latin.woff2") format("woff2");
+  font-weight: 200 800;
+  font-stretch: 75% 100%;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Bricolage Grotesque";
+  src: url("../assets/fonts/bricolage-latin-ext.woff2") format("woff2");
+  font-weight: 200 800;
+  font-stretch: 75% 100%;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+:root {
+  /* primitivos */
+  --navy-950: #0c1022;
+  --navy-900: #10142a;
+  --navy-850: #161b36;
+  --navy-800: #1d2344;
+  --ivory-50: #f5efe6;
+  --ivory-300: #c2c5d8;
+  --ivory-500: #9499b5;
+  --sunset-400: #f6a85e;
+  --moon-300: #b6beff;
+
+  /* semánticos */
+  --ground: var(--navy-900);
+  --raised: var(--navy-850);
+  --high: var(--navy-800);
+  --text: var(--ivory-50);
+  --text-2: var(--ivory-300);
+  --text-3: var(--ivory-500);
+  --line: rgb(245 239 230 / 0.12);
+  --accent: var(--sunset-400);
+
+  --bar-h: 58px;
+  --rail-w: 44px; /* 44 px táctiles; la marca visible ocupa unos 28 */
+  --col: 4.4rem;
+  --gutter: 16px;
+
+  --display: "Bricolage Grotesque", "Avenir Next Condensed", "Arial Narrow", system-ui, sans-serif;
+  --text-font: "Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  color-scheme: dark;
+  accent-color: var(--accent);
+}
+
+:root[data-tarifa="noche"] {
+  --accent: var(--moon-300);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scrollbar-color: var(--text-3) var(--ground);
+  background: var(--ground);
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  background: var(--ground);
+  color: var(--text);
+  font-family: var(--text-font);
+  font-size: 1rem;
+  line-height: 1.5;
+  font-variation-settings: "opsz" 16;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--accent) 40%, transparent);
+  color: var(--text);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+[tabindex="-1"]:focus {
+  outline: none;
+}
+
+img,
+svg {
+  display: block;
+}
+
+h2,
+h3,
+h4,
+p,
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- Cabecera ---------- */
+
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  height: calc(var(--bar-h) + env(safe-area-inset-top));
+  padding: env(safe-area-inset-top) max(var(--gutter), env(safe-area-inset-right)) 0 max(var(--gutter), env(safe-area-inset-left));
+  background: var(--ground);
+  transition: box-shadow 0.3s var(--ease-out);
+}
+
+.bar.is-scrolled {
+  box-shadow: 0 1px 0 var(--line), 0 10px 18px -14px rgb(0 0 0 / 0.7);
+}
+
+.brand {
+  display: block;
+  padding: 6px 0;
+}
+
+.brand img {
+  width: 124px;
+  height: auto;
+}
+
+.tarifa {
+  display: grid;
+  justify-items: end;
+  line-height: 1.15;
+  text-align: right;
+}
+
+.tarifa-name {
+  color: var(--accent);
+  font-size: 0.875rem;
+  font-weight: 650;
+  transition: color 0.6s ease;
+}
+
+.tarifa-when {
+  color: var(--text-2);
+  font-size: 0.8125rem;
+}
+
+.lang {
+  display: flex;
+  padding: 3px;
+  border-radius: 12px;
+  background: var(--raised);
+}
+
+.lang button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-3);
+  font: 600 0.8125rem/1 var(--text-font);
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.lang button[aria-pressed="true"] {
+  background: var(--high);
+  color: var(--text);
+}
+
+/* ---------- Estructura ---------- */
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--rail-w);
+  max-width: 760px;
+  margin: 0 auto;
+  padding-left: max(var(--gutter), env(safe-area-inset-left));
+}
+
+#carta {
+  min-width: 0;
+  padding-bottom: calc(48px + env(safe-area-inset-bottom));
+}
+
+[data-section] {
+  scroll-margin-top: calc(var(--bar-h) + 8px);
+}
+
+.family + .family,
+.family + .closing {
+  margin-top: 48px;
+}
+
+.family-title {
+  font-family: var(--display);
+  font-size: clamp(2.375rem, 10.5vw, 3.25rem);
+  font-weight: 760;
+  font-stretch: 75%;
+  font-variation-settings: "opsz" 96;
+  line-height: 0.95;
+  letter-spacing: -0.012em;
+  text-wrap: balance;
+}
+
+.sec + .sec {
+  margin-top: 36px;
+}
+
+.sec-title {
+  font-family: var(--display);
+  font-size: 1.375rem;
+  font-weight: 680;
+  font-stretch: 88%;
+  font-variation-settings: "opsz" 32;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+.family-title + .sec {
+  margin-top: 20px;
+}
+
+/* ---------- Top ventas ---------- */
+
+.family--top {
+  padding-top: 18px;
+}
+
+.family--top .family-title {
+  margin-bottom: 14px;
+}
+
+.banner {
+  position: relative;
+  height: clamp(272px, 42svh, 360px);
+  margin-right: 10px;
+  border-radius: 24px;
+  background: var(--raised);
+  overflow: hidden;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  isolation: isolate;
+}
+
+.banner.is-dragging {
+  cursor: grabbing;
+}
+
+.banner-track {
+  display: flex;
+  height: 100%;
+  will-change: transform;
+}
+
+.slide {
+  --o: 0;
+  position: relative;
+  flex: 0 0 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44%;
+  align-items: end;
+  padding: 24px 0 52px 22px;
+  overflow: hidden;
+  /* Charco de luz del color del cóctel donde se apoya la copa. */
+  background:
+    radial-gradient(60% 46% at 74% 92%, color-mix(in oklab, var(--tint) 46%, transparent), transparent 72%),
+    radial-gradient(90% 70% at 85% 100%, color-mix(in oklab, var(--tint) 14%, transparent), transparent 80%);
+}
+
+.slide::after {
+  /* La barra: una línea de apoyo que da peso a la copa. */
+  content: "";
+  position: absolute;
+  left: 48%;
+  right: 0;
+  bottom: 40px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(245 239 230 / 0.22) 30%, rgb(245 239 230 / 0.22));
+}
+
+.slide-copy {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 8px;
+  padding-right: 8px;
+  transform: translateX(calc(var(--o) * 6%));
+}
+
+.slide-name {
+  font-family: var(--display);
+  font-size: clamp(1.875rem, 8.6vw, 2.5rem);
+  font-weight: 760;
+  font-stretch: 75%;
+  font-variation-settings: "opsz" 96;
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.slide-line {
+  max-width: 22ch;
+  color: var(--text-2);
+  font-size: 1rem;
+  line-height: 1.4;
+  text-wrap: pretty;
+}
+
+.slide-price {
+  margin-top: 4px;
+  font-size: 1.5rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.slide-glass {
+  position: absolute;
+  right: 4%;
+  bottom: 40px;
+  width: 44%;
+  height: calc(100% - 56px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  transform: translateX(calc(var(--o) * -22%));
+  pointer-events: none;
+}
+
+.slide-glass img {
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: bottom;
+  filter: drop-shadow(0 14px 14px rgb(0 0 0 / 0.45));
+}
+
+.slide-glass--drawn .glass {
+  height: 78%;
+  width: auto;
+}
+
+.banner-steps {
+  position: absolute;
+  left: 8px;
+  bottom: 2px;
+  z-index: 2;
+  display: flex;
+}
+
+.banner-step {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.banner-step span {
+  width: 30px;
+  height: 3px;
+  border-radius: 2px;
+  background: rgb(245 239 230 / 0.28);
+  transform: scaleX(0.733);
+  transition: transform 0.35s var(--ease-out), background-color 0.35s ease;
+}
+
+.banner-step.is-active span {
+  background: var(--text);
+  transform: scaleX(1);
+}
+
+/* ---------- Cócteles ---------- */
+
+.sec--cocktails .sec-title {
+  margin-bottom: 4px;
+}
+
+.cocktail {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 14px;
+  padding: 14px 10px 14px 0;
+}
+
+.cocktail + .cocktail {
+  border-top: 1px solid var(--line);
+}
+
+.cocktail-thumb {
+  height: 68px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.cocktail-thumb img {
+  /* Alto fijo y ancho por la proporción de width/height: el hueco existe antes de que cargue. */
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: bottom;
+}
+
+.cocktail-thumb .glass {
+  height: 100%;
+  width: auto;
+}
+
+.cocktail-text {
+  padding-top: 2px;
+}
+
+.cocktail-name {
+  font-size: 1.125rem;
+  font-weight: 640;
+  font-stretch: 92%;
+  line-height: 1.25;
+}
+
+.cocktail-top {
+  color: var(--accent);
+  font-weight: 600;
+  white-space: nowrap;
+  transition: color 0.6s ease;
+}
+
+.cocktail-line {
+  margin-top: 3px;
+  color: var(--text-2);
+  font-size: 1rem;
+  line-height: 1.4;
+  text-wrap: pretty;
+}
+
+.cocktail-price {
+  padding-top: 2px;
+  font-size: 1.0625rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+/* Siluetas de copa */
+.glass .g-line {
+  fill: none;
+  stroke: rgb(245 239 230 / 0.78);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.glass .g-liquid {
+  opacity: 0.92;
+}
+
+.glass .g-straw {
+  fill: none;
+  stroke: rgb(245 239 230 / 0.55);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.glass .g-ice {
+  fill: rgb(245 239 230 / 0.28);
+  stroke: rgb(245 239 230 / 0.5);
+  stroke-width: 1;
+}
+
+.glass .g-rim {
+  fill: none;
+  stroke: rgb(245 239 230 / 0.9);
+  stroke-width: 2.4;
+  stroke-dasharray: 1.5 2.5;
+  stroke-linecap: round;
+}
+
+.glass--metal .g-liquid {
+  fill: #b87a4b !important;
+  opacity: 1;
+}
+
+.glass--metal .g-line {
+  stroke: #e2a878;
+}
+
+/* ---------- Bebidas: tarde y noche ---------- */
+
+.sec-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--col) var(--col);
+  align-items: end;
+  padding-right: 10px;
+}
+
+.col-label {
+  display: grid;
+  justify-items: end;
+  padding-right: 10px;
+  color: var(--text-3);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.2;
+  transition: color 0.6s ease;
+}
+
+:root[data-tarifa="tarde"] .col-label[data-col="tarde"],
+:root[data-tarifa="noche"] .col-label[data-col="noche"] {
+  color: var(--accent);
+}
+
+.sec-note {
+  margin-top: 4px;
+  color: var(--text-2);
+  font-size: 0.875rem;
+}
+
+.prices {
+  position: relative;
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+/* La columna vigente se ilumina de arriba abajo. */
+.band {
+  position: absolute;
+  top: -6px;
+  bottom: -6px;
+  right: 0;
+  width: var(--col);
+  border-radius: 12px;
+  transform: translateX(0);
+  /* Un escalón de la propia noche, no un tinte del acento: el ámbar al 10 % sobre azul salía marrón. */
+  background: var(--raised);
+  transition: transform 0.5s var(--ease-out);
+}
+
+:root[data-tarifa="tarde"] .band {
+  transform: translateX(calc(-1 * var(--col)));
+}
+
+.row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--col) var(--col);
+  align-items: last baseline;
+  padding: 7px 0;
+}
+
+.row-name {
+  display: flex;
+  align-items: last baseline;
+  min-width: 0;
+}
+
+.row-text {
+  min-width: 0;
+  font-size: 1rem;
+  line-height: 1.35;
+  text-wrap: pretty;
+}
+
+.row-name::after {
+  /* Puntos guía de carta de bar, hasta la primera columna. */
+  content: "";
+  flex: 1 0 14px;
+  margin: 0 8px 0 10px;
+  border-bottom: 2px dotted rgb(245 239 230 / 0.2);
+  transform: translateY(-0.28em);
+}
+
+.row-note {
+  display: block;
+  color: var(--text-3);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+}
+
+.price {
+  padding-right: 10px;
+  color: var(--text-3);
+  font-size: 1rem;
+  font-weight: 450;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+  transition: color 0.6s ease;
+}
+
+.price-from {
+  margin-right: 0.25em;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+:root[data-tarifa="tarde"] .price[data-col="tarde"],
+:root[data-tarifa="noche"] .price[data-col="noche"] {
+  color: var(--text);
+  font-weight: 650;
+}
+
+/* ---------- Cierre ---------- */
+
+.closing {
+  display: grid;
+  justify-items: center;
+  gap: 28px;
+  padding: 40px 10px 8px 0;
+  border-top: 1px solid var(--line);
+  text-align: center;
+}
+
+.notes {
+  display: grid;
+  gap: 10px;
+  max-width: 46ch;
+  color: var(--text-2);
+  font-size: 1rem;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.closing-logo {
+  width: 200px;
+  height: auto;
+  margin-top: 12px;
+  opacity: 0.92;
+}
+
+.closing-tagline {
+  margin-top: -14px;
+  color: var(--text-3);
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+}
+
+.noscript {
+  padding: 32px 0;
+  color: var(--text-2);
+}
+
+.noscript a {
+  color: var(--accent);
+}
+
+/* ---------- Índice al pulgar ---------- */
+
+.rail {
+  position: sticky;
+  top: calc(var(--bar-h) + env(safe-area-inset-top));
+  align-self: start;
+  height: calc(100svh - var(--bar-h) - env(safe-area-inset-top));
+  padding: 10px max(4px, env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) 0;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: ns-resize;
+  z-index: 10;
+}
+
+.rail-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 100%;
+}
+
+.rail-family {
+  flex: var(--n) 1 0;
+  min-height: calc(var(--len) * 0.6em + 14px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 12px;
+  font-size: clamp(0.6875rem, 1.55svh, 0.75rem);
+}
+
+.rail-label {
+  align-self: center;
+  justify-self: center;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  color: var(--text-3);
+  font-weight: 600;
+  font-stretch: 88%;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  white-space: nowrap;
+  transition: color 0.25s ease;
+}
+
+.rail-family.is-current .rail-label {
+  color: var(--accent);
+}
+
+.rail-ticks {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.rail-ticks li {
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+.rail-tick {
+  position: relative;
+  display: block;
+  height: 100%;
+  min-height: 6px;
+}
+
+.rail-tick::before {
+  content: "";
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  width: 12px;
+  height: 3px;
+  border-radius: 1.5px;
+  background: rgb(245 239 230 / 0.32);
+  /* Reposo: 5 × 2 px; la marca vigente crece a 12 × 3 desde el borde. */
+  transform: translateY(-50%) scale(0.417, 0.667);
+  transform-origin: right center;
+  transition: transform 0.25s var(--ease-out), background-color 0.25s ease;
+}
+
+.rail-tick[aria-current]::before {
+  background: var(--accent);
+  transform: translateY(-50%) scale(1);
+}
+
+.rail-tick:focus-visible {
+  outline-offset: -2px;
+}
+
+.rail.is-scrubbing .rail-label {
+  color: var(--text-2);
+}
+
+.rail.is-scrubbing .rail-family.is-current .rail-label {
+  color: var(--accent);
+}
+
+/* Rótulo grande mientras se arrastra el pulgar. */
+.bubble {
+  --y: 50vh;
+  position: fixed;
+  top: 0;
+  right: calc(var(--rail-w) + 14px + env(safe-area-inset-right));
+  z-index: 30;
+  display: grid;
+  max-width: min(78vw, 360px);
+  padding: 12px 18px 14px;
+  border-radius: 16px;
+  background: var(--high);
+  box-shadow: 0 14px 34px -10px rgb(0 0 0 / 0.65), 0 2px 6px rgb(0 0 0 / 0.3);
+  opacity: 0;
+  transform: translate3d(8px, var(--y), 0) scale(0.96);
+  transform-origin: right center;
+  pointer-events: none;
+  transition: opacity 0.16s ease, transform 0.22s var(--ease-out);
+}
+
+.bubble.is-visible {
+  opacity: 1;
+  transform: translate3d(0, var(--y), 0) scale(1);
+}
+
+.bubble-family {
+  margin-top: 2px;
+  color: var(--text-2);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.bubble-family:empty {
+  display: none;
+}
+
+.bubble-title {
+  font-family: var(--display);
+  font-size: 1.875rem;
+  font-weight: 760;
+  font-stretch: 75%;
+  font-variation-settings: "opsz" 96;
+  line-height: 1.02;
+}
+
+/* ---------- Ratón ---------- */
+
+@media (hover: hover) {
+  .lang button:hover:not([aria-pressed="true"]) {
+    color: var(--text-2);
+  }
+
+  .banner-step:hover:not(.is-active) span {
+    background: rgb(245 239 230 / 0.55);
+  }
+
+  .rail-tick:hover:not([aria-current])::before {
+    background: var(--text-2);
+    transform: translateY(-50%) scale(0.75, 1);
+  }
+}
+
+/* ---------- Pantallas grandes ---------- */
+
+@media (min-width: 720px) {
+  :root {
+    --rail-w: 56px;
+    --gutter: 32px;
+    --col: 5rem;
+  }
+
+  .brand img {
+    width: 148px;
+  }
+
+  /* La cabecera sigue la columna de la carta (760 px) en vez de irse a los bordes de la pantalla. */
+  .bar {
+    padding-left: max(var(--gutter), calc((100% - 760px) / 2 + var(--gutter)));
+    padding-right: max(var(--gutter), calc((100% - 760px) / 2));
+  }
+
+  .banner {
+    height: 380px;
+  }
+
+  .slide {
+    padding: 36px 0 60px 40px;
+  }
+
+  .cocktail {
+    grid-template-columns: 64px minmax(0, 1fr) auto;
+    gap: 18px;
+  }
+
+  .cocktail-thumb {
+    height: 84px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+
+  .slide-copy,
+  .slide-glass {
+    transform: none;
+  }
+}
