@@ -108,6 +108,14 @@ const CUTOUT_W = {
   "mojito-clasico": [116, 314],
   "mojito-frutas": [122, 329],
   "porn-star-martini": [194, 508],
+  caipirinha: [184, 473],
+  caipiroska: [183, 470],
+  "pina-colada": [130, 334],
+  "moscow-mule": [201, 516],
+  margarita: [188, 483],
+  "matcha-mojito": [123, 317],
+  "pina-colada-sin": [131, 336],
+  caribeno: [122, 314],
 };
 
 function thumb(p, size) {

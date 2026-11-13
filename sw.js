@@ -1,7 +1,7 @@
 // Caribbean's Avenue · offline cache
 // Sube VERSION cada vez que cambie cualquier archivo de la carta (index, carta/*, data/*),
 // y el ?v= de index.html si cambian carta.css o app.js: así los móviles cogen la carta nueva.
-const VERSION = "carta-v5";
+const VERSION = "carta-v6";
 const SHELL = [
   "./",
   "carta/carta.css?v=2",
@@ -23,10 +23,26 @@ const PHOTOS = [
   "assets/cocktails/porn-star-martini-720.webp",
   "assets/cocktails/mojito-frutas-720.webp",
   "assets/cocktails/mojito-clasico-720.webp",
+  "assets/cocktails/caipirinha-720.webp",
+  "assets/cocktails/caipiroska-720.webp",
+  "assets/cocktails/pina-colada-720.webp",
+  "assets/cocktails/moscow-mule-720.webp",
+  "assets/cocktails/margarita-720.webp",
+  "assets/cocktails/matcha-mojito-720.webp",
+  "assets/cocktails/pina-colada-sin-720.webp",
+  "assets/cocktails/caribeno-720.webp",
   "assets/cocktails/caribbeans-spritz-280.webp",
   "assets/cocktails/porn-star-martini-280.webp",
   "assets/cocktails/mojito-frutas-280.webp",
   "assets/cocktails/mojito-clasico-280.webp",
+  "assets/cocktails/caipirinha-280.webp",
+  "assets/cocktails/caipiroska-280.webp",
+  "assets/cocktails/pina-colada-280.webp",
+  "assets/cocktails/moscow-mule-280.webp",
+  "assets/cocktails/margarita-280.webp",
+  "assets/cocktails/matcha-mojito-280.webp",
+  "assets/cocktails/pina-colada-sin-280.webp",
+  "assets/cocktails/caribeno-280.webp",
 ];
 
 self.addEventListener("install", (event) => {
