@@ -1,11 +1,12 @@
 // Caribbean's Avenue · offline cache
-// Sube VERSION cada vez que cambie cualquier archivo de la carta (index, carta/*, data/*),
-// y el ?v= de index.html si cambian carta.css o app.js: así los móviles cogen la carta nueva.
-const VERSION = "carta-v7";
+// El código (página, carta/*, data/*) va SIEMPRE primero a la red y la copia guardada solo se usa
+// sin cobertura: así un cambio publicado llega al móvil aunque se olvide subir VERSION.
+// Las fotos y fuentes sí salen de la caché: si cambia una, sube VERSION (o cambia su nombre).
+const VERSION = "carta-v8";
 const SHELL = [
   "./",
-  "carta/carta.css?v=3",
-  "carta/app.js?v=3",
+  "carta/carta.css?v=4",
+  "carta/app.js?v=4",
   "carta/source.js",
   "carta/remote.js",
   "carta/glasses.js",
@@ -49,7 +50,8 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     caches
       .open(VERSION)
-      .then((cache) => cache.addAll(SHELL).then(() => cache.addAll(PHOTOS).catch(() => {})))
+      // cache: "reload" salta la caché HTTP del navegador para no guardar una copia vieja.
+      .then((cache) => cache.addAll(SHELL.map(fresh)).then(() => cache.addAll(PHOTOS.map(fresh)).catch(() => {})))
       .then(() => self.skipWaiting()),
   );
 });
@@ -63,10 +65,13 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// Pages: try the network briefly so price changes arrive, fall back to the saved copy.
-async function pageResponse(request) {
+const fresh = (url) => new Request(url, { cache: "reload" });
+
+// Página y código: red primero (con 2,5 s de margen), la copia guardada solo si no hay red.
+async function networkFirst(request) {
   const cache = await caches.open(VERSION);
-  const network = fetch(request)
+  // Una navegación no admite opciones; el resto pregunta al servidor saltando la caché HTTP.
+  const network = (request.mode === "navigate" ? fetch(request) : fetch(request, { cache: "no-cache" }))
     .then((response) => {
       if (response.ok) {
         cache.put(request, response.clone());
@@ -85,12 +90,14 @@ async function pageResponse(request) {
     // Offline or network error: use the saved copy below.
   }
 
-  const cached = (await cache.match(request, { ignoreSearch: true })) || (await cache.match("./"));
+  const cached =
+    (await cache.match(request, { ignoreSearch: true })) ||
+    (request.mode === "navigate" ? await cache.match("./") : undefined);
   return cached || network;
 }
 
-// Everything else (css, js, fonts, images): saved copy first, network only when missing.
-async function assetResponse(request) {
+// Fotos y fuentes: copia guardada primero, red solo si falta.
+async function cacheFirst(request) {
   const cache = await caches.open(VERSION);
   const cached = await cache.match(request);
 
@@ -122,5 +129,6 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  event.respondWith(request.mode === "navigate" ? pageResponse(request) : assetResponse(request));
+  const media = /\.(webp|png|jpe?g|svg|woff2?)$/i.test(url.pathname);
+  event.respondWith(media ? cacheFirst(request) : networkFirst(request));
 });

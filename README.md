@@ -45,8 +45,9 @@ node dev-server.mjs          # http://127.0.0.1:4173
 ## Antes de publicar
 
 - `node tests/check-data.mjs` y `node tests/check-bebidas.mjs` en verde.
-- **Sube `VERSION` en `sw.js`** si cambia cualquier archivo de la carta, y el `?v=` de `index.html`
-  si cambian `carta.css` o `app.js`; si no, los móviles siguen viendo la carta guardada.
+- El código (página, `carta/*`, `data/*`) llega solo: el service worker pregunta antes a la red y,
+  si entra un `sw.js` nuevo, la carta se recarga una vez. **Sube `VERSION` en `sw.js`** si cambias
+  una foto o una fuente con el mismo nombre (esas sí salen de la caché del móvil).
 - Revisa en móvil (390 px) y escritorio, ES/EN y las dos tarifas.
 
 ## QR

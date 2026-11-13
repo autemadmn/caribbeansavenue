@@ -330,5 +330,16 @@ loadRemoteMenu()
   .catch(() => {});
 
 if ("serviceWorker" in navigator && location.protocol === "https:") {
-  addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+  // updateViaCache "none": el navegador siempre pregunta por sw.js nuevo, sin caché HTTP.
+  addEventListener("load", () => navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).catch(() => {}));
+
+  // Si la carta se abrió con un service worker viejo y entra uno nuevo, se recarga una vez
+  // para que el móvil enseñe ya la versión publicada y no la que tenía guardada.
+  const hadController = Boolean(navigator.serviceWorker.controller);
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (!hadController || reloaded) return;
+    reloaded = true;
+    location.reload();
+  });
 }
