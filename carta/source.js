@@ -24,16 +24,6 @@ export const NOTES = [
   },
 ];
 
-const RAIL = {
-  top: { es: "Top", en: "Top" },
-  cocteles: { es: "Cócteles", en: "Cocktails" },
-  "cervezas-vinos": { es: "Cervezas", en: "Beer" },
-  champagne: { es: "Champagne", en: "Champagne" },
-  copas: { es: "Copas", en: "Spirits" },
-  licores: { es: "Licores", en: "Liqueurs" },
-  refrescos: { es: "Refrescos", en: "Softs" },
-};
-
 function cocktailFrom(p) {
   return {
     id: p.id,
@@ -73,7 +63,6 @@ export function buildMenu({ cocktailCategories, drinkFamilies }) {
     sections: cocktails,
   });
   for (const fam of drinkFamilies) families.push({ ...fam, kind: "drinks" });
-  for (const fam of families) fam.rail = RAIL[fam.id] || fam.title;
   return { families, top, notes: NOTES };
 }
 

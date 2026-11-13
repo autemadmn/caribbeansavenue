@@ -1,16 +1,16 @@
 // Caribbean's Avenue · offline cache
 // Sube VERSION cada vez que cambie cualquier archivo de la carta (index, carta/*, data/*),
 // y el ?v= de index.html si cambian carta.css o app.js: así los móviles cogen la carta nueva.
-const VERSION = "carta-v6";
+const VERSION = "carta-v7";
 const SHELL = [
   "./",
-  "carta/carta.css?v=2",
-  "carta/app.js?v=2",
+  "carta/carta.css?v=3",
+  "carta/app.js?v=3",
   "carta/source.js",
   "carta/remote.js",
   "carta/glasses.js",
   "carta/banner.js",
-  "carta/rail.js",
+  "carta/nav.js",
   "data/carta.js",
   "data/bebidas.js",
   "assets/fonts/bricolage-latin.woff2",

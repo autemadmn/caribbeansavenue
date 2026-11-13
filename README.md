@@ -23,7 +23,7 @@ node dev-server.mjs          # http://127.0.0.1:4173
 | `index.html` | La carta. Solo la cabecera; el resto lo pinta `carta/app.js`. |
 | `carta/app.js` | Pintado, tarifa por hora, idioma, arranque. |
 | `carta/banner.js` | Banner de Top ventas: gira cada 4,5 s, se arrastra con inercia. |
-| `carta/rail.js` | «Índice al pulgar»: arrastrar el borde derecho salta por secciones con rótulo grande. |
+| `carta/nav.js` | Barra de secciones fija (chips que marcan la familia en pantalla) y buscador sin tildes ES/EN. |
 | `carta/glasses.js` | Siluetas de copa para los cócteles sin foto. |
 | `carta/source.js` | Datos locales (cócteles + bebidas + notas del local). |
 | `carta/remote.js` | Datos del panel ADELARES (Supabase). **Vacío por ahora**: devuelve `null`. |

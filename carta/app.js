@@ -1,12 +1,12 @@
 // Caribbean's Avenue · carta de una página.
 // Pinta la carta desde los datos (locales o del panel), aplica la tarifa vigente con la hora
-// de Valencia y monta el banner de Top ventas y el índice al pulgar.
+// de Valencia y monta el banner de Top ventas y la barra de secciones con buscador.
 
 import { localMenu } from "./source.js";
 import { loadRemoteMenu } from "./remote.js";
 import { glassSVG } from "./glasses.js";
 import { Banner } from "./banner.js";
-import { Rail } from "./rail.js";
+import { Nav, norm } from "./nav.js";
 
 const CUTOFF_MIN = 22 * 60 + 30; // 22:30
 const NIGHT_UNTIL_MIN = 6 * 60; // de madrugada sigue siendo noche
@@ -18,7 +18,13 @@ const UI = {
     when: { tarde: "hasta las 22:30", noche: "desde las 22:30" },
     col: { tarde: "Tarde", noche: "Noche" },
     top: "Top ventas",
-    index: "Índice de la carta",
+    nav: "Secciones de la carta",
+    search: "Buscar en la carta",
+    searchPlaceholder: "Buscar bebida o ingrediente",
+    close: "Cerrar",
+    results: (n) => (n === 1 ? "1 resultado" : `${n} resultados`),
+    noResults: (q) => `No hay nada con «${q}».`,
+    noResultsHint: "Prueba con otra palabra o pregunta al personal.",
     lang: "Idioma",
     slide: (i, n) => `${i} de ${n}`,
     show: (name) => `Ver ${name}`,
@@ -32,7 +38,13 @@ const UI = {
     when: { tarde: "until 22:30", noche: "from 22:30" },
     col: { tarde: "Day", noche: "Night" },
     top: "Best sellers",
-    index: "Menu index",
+    nav: "Menu sections",
+    search: "Search the menu",
+    searchPlaceholder: "Search a drink or ingredient",
+    close: "Close",
+    results: (n) => (n === 1 ? "1 result" : `${n} results`),
+    noResults: (q) => `Nothing matches “${q}”.`,
+    noResultsHint: "Try another word or ask our staff.",
     lang: "Language",
     slide: (i, n) => `${i} of ${n}`,
     show: (name) => `Show ${name}`,
@@ -51,7 +63,7 @@ const state = {
   tarifa: "tarde",
   menu: localMenu(),
   banner: null,
-  rail: null,
+  nav: null,
 };
 
 function pickLang() {
@@ -163,8 +175,21 @@ function topHTML(fam, top) {
   </section>`;
 }
 
-function cocktailHTML(p) {
-  return `<li class="cocktail" id="c-${esc(p.id)}">
+// Texto de búsqueda de un producto: nombre, línea y sección en los dos idiomas, sin tildes.
+const both = (v) => (v && typeof v === "object" ? `${v.es ?? ""} ${v.en ?? ""}` : (v ?? ""));
+// Va también todo junto, para que «redbull» o «pornstar» encuentren «Red Bull» y «Porn Star».
+// Y con las otras formas en que la gente lo escribe.
+const ALIAS = { whiskey: "whisky", champagne: "champan", cognac: "coñac conac" };
+const haystack = (...parts) => {
+  const h = norm(parts.map(both).join(" "));
+  const extra = Object.entries(ALIAS)
+    .filter(([k]) => h.split(" ").includes(k))
+    .map(([, v]) => norm(v));
+  return esc([h, ...extra, h.replace(/ /g, "")].join(" "));
+};
+
+function cocktailHTML(p, sec) {
+  return `<li class="cocktail" id="c-${esc(p.id)}" data-q="${haystack(p.name, p.line, sec.title, "coctel cocktail")}">
     <div class="cocktail-thumb">${thumb(p, "small")}</div>
     <div class="cocktail-text">
       <h4 class="cocktail-name">${esc(t(p.name))}</h4>
@@ -183,9 +208,9 @@ function colLabels() {
     .join("");
 }
 
-function drinkRowHTML(p) {
+function drinkRowHTML(p, sec) {
   const note = p.desde ? ui().fromNote : t(p.note);
-  return `<li class="row">
+  return `<li class="row" data-q="${haystack(p.name, p.note, sec.title)}">
     <span class="row-name"><span class="row-text">${esc(t(p.name))}${note ? `<span class="row-note">${esc(note)}</span>` : ""}</span></span>
     <span class="price" data-col="tarde">${p.desde ? `<span class="price-from">${esc(ui().from)}</span>` : ""}${esc(money(p.tarde))}</span>
     <span class="price" data-col="noche">${p.desde ? `<span class="price-from">${esc(ui().from)}</span>` : ""}${esc(money(p.noche))}</span>
@@ -200,15 +225,15 @@ function familyHTML(fam) {
       const h3 = titled ? `<h3 class="sec-title" tabindex="-1">${esc(t(sec.title))}</h3>` : "";
       if (fam.kind === "cocktails") {
         return `<section class="sec sec--cocktails" id="s-${esc(sec.id)}" data-section="${esc(sec.id)}">
-          ${h3}<ul class="cocktails">${sec.products.map(cocktailHTML).join("")}</ul>
+          ${h3}<ul class="cocktails">${sec.products.map((p) => cocktailHTML(p, sec)).join("")}</ul>
         </section>`;
       }
       return `<section class="sec sec--drinks" id="s-${esc(sec.id)}" data-section="${esc(sec.id)}">
         <div class="sec-head">${h3 || `<span class="sec-title sec-title--ghost" aria-hidden="true"></span>`}${colLabels()}</div>
         ${sec.note ? `<p class="sec-note">${esc(t(sec.note))}</p>` : ""}
-        <ul class="prices" style="--rows:${sec.products.length}">
+        <ul class="prices">
           <li class="band" aria-hidden="true"></li>
-          ${sec.products.map(drinkRowHTML).join("")}
+          ${sec.products.map((p) => drinkRowHTML(p, sec)).join("")}
         </ul>
       </section>`;
     })
@@ -216,22 +241,12 @@ function familyHTML(fam) {
   return `<section class="family family--${esc(fam.kind)}" id="f-${esc(fam.id)}" aria-labelledby="h-${esc(fam.id)}">${h2}${sections}</section>`;
 }
 
-function railHTML(menu) {
-  return `<ol class="rail-list">${menu.families
-    .map(
-      (fam) => `<li class="rail-family" style="--n:${fam.sections.length};--len:${t(fam.rail).length}">
-        <span class="rail-label" aria-hidden="true">${esc(t(fam.rail))}</span>
-        <ol class="rail-ticks">${fam.sections
-          .map(
-            (sec) =>
-              `<li><a class="rail-tick" href="#${fam.id === "top" ? "top-ventas" : `s-${esc(sec.id)}`}" data-for="${esc(sec.id)}"><span class="sr-only">${esc(
-                t(sec.title),
-              )}</span></a></li>`,
-          )
-          .join("")}</ol>
-      </li>`,
-    )
-    .join("")}</ol>`;
+const famAnchor = (fam) => (fam.kind === "top" ? "top-ventas" : `f-${fam.id}`);
+
+function chipsHTML(menu) {
+  return menu.families
+    .map((fam) => `<li><a class="chip" href="#${esc(famAnchor(fam))}">${esc(t(fam.title))}</a></li>`)
+    .join("");
 }
 
 function notesHTML(menu) {
@@ -242,57 +257,49 @@ function notesHTML(menu) {
   </footer>`;
 }
 
-const headerOffset = () => $(".bar").getBoundingClientRect().height + 8;
-
 function render({ keepPlace = false } = {}) {
   const menu = state.menu;
   const main = $("#carta");
-  const railEl = $(".rail");
+  const navEl = $(".nav");
 
-  // Mantener el sitio al cambiar de idioma: misma sección, mismo desplazamiento.
+  // Mantener el sitio al cambiar de idioma: misma familia, mismo desplazamiento.
   let anchor = null;
-  if (keepPlace && state.rail?.current) {
-    anchor = { id: state.rail.current.id, dy: state.rail.current.el.getBoundingClientRect().top };
+  if (keepPlace && state.nav?.current) {
+    anchor = { id: state.nav.current.id, dy: state.nav.current.el.getBoundingClientRect().top };
   }
 
+  const u = ui();
   document.documentElement.lang = state.lang;
-  document.title = ui().title;
-  $(".lang").setAttribute("aria-label", ui().lang);
+  document.title = u.title;
+  $(".lang").setAttribute("aria-label", u.lang);
   for (const b of document.querySelectorAll(".lang button")) b.setAttribute("aria-pressed", String(b.dataset.lang === state.lang));
-  railEl.setAttribute("aria-label", ui().index);
+  navEl.setAttribute("aria-label", u.nav);
+  $(".nav-search").setAttribute("aria-label", u.search);
+  $(".search-input").setAttribute("aria-label", u.search);
+  $(".search-input").placeholder = u.searchPlaceholder;
+  $(".search-close").textContent = u.close;
 
   state.banner?.destroy();
   main.innerHTML = menu.families
     .map((fam) => (fam.kind === "top" ? topHTML(fam, menu.top) : familyHTML(fam)))
     .join("") + notesHTML(menu);
-  railEl.innerHTML = railHTML(menu);
+  $(".chips").innerHTML = chipsHTML(menu);
 
   const bannerEl = $(".banner", main);
   state.banner = bannerEl ? new Banner(bannerEl, menu.top.length) : null;
 
-  const sections = [];
-  for (const fam of menu.families) {
-    fam.sections.forEach((sec, i) => {
-      let el = main.querySelector(`[data-section="${CSS.escape(sec.id)}"]`);
-      const tick = railEl.querySelector(`[data-for="${CSS.escape(sec.id)}"]`);
-      // La primera sección de cada familia empieza en el título grande de la familia:
-      // así el índice cambia en cuanto «Copas» llega arriba y el salto lo deja a la vista.
-      if (el && i === 0) el = el.closest(".family") || el;
-      if (el && tick) sections.push({ id: sec.id, el, tick, fam, sec });
-    });
-  }
-  const label = (s) => ({ title: t(s.sec.title), family: t(s.fam.title) });
-  if (!state.rail) {
-    state.rail = new Rail({ rail: railEl, bubble: $(".bubble"), sections, headerOffset, label });
-  } else {
-    state.rail.setSections(sections);
-  }
+  const chips = [...document.querySelectorAll(".chip")];
+  const families = menu.families
+    .map((fam, i) => ({ id: fam.id, el: document.getElementById(famAnchor(fam)), chip: chips[i] }))
+    .filter((f) => f.el && f.chip);
+  if (!state.nav) state.nav = new Nav({ nav: navEl, main, strings: ui });
+  state.nav.setFamilies(families);
 
   applyTarifa();
 
-  if (anchor) {
-    const s = sections.find((x) => x.id === anchor.id);
-    if (s) scrollTo({ top: s.el.getBoundingClientRect().top + scrollY - anchor.dy, behavior: "instant" });
+  if (anchor && !state.nav.filtering) {
+    const f = families.find((x) => x.id === anchor.id);
+    if (f) scrollTo({ top: f.el.getBoundingClientRect().top + scrollY - anchor.dy, behavior: "instant" });
   }
 }
 
@@ -308,12 +315,6 @@ function setLang(lang) {
 /* ---------- Arranque ---------- */
 
 for (const b of document.querySelectorAll(".lang button")) b.addEventListener("click", () => setLang(b.dataset.lang));
-
-// La cabecera gana una línea de separación en cuanto hay contenido debajo.
-const bar = $(".bar");
-const onScroll = () => bar.classList.toggle("is-scrolled", scrollY > 4);
-addEventListener("scroll", onScroll, { passive: true });
-onScroll();
 
 render();
 setInterval(applyTarifa, 30_000);

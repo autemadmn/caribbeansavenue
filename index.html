@@ -10,12 +10,12 @@
     <link rel="icon" href="assets/brand/caribbeans-logo-white.svg" type="image/svg+xml">
     <link rel="preload" href="assets/fonts/bricolage-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="assets/cocktails/caribbeans-spritz-720.webp" as="image">
-    <link rel="stylesheet" href="carta/carta.css?v=2">
-    <script type="module" src="carta/app.js?v=2"></script>
+    <link rel="stylesheet" href="carta/carta.css?v=3">
+    <script type="module" src="carta/app.js?v=3"></script>
   </head>
   <body>
     <header class="bar">
-      <a class="brand" href="#top-ventas"><img src="assets/brand/caribbeans-logo-white.svg" alt="Caribbean's Avenue" width="124" height="33"></a>
+      <a class="brand" href="#"><img src="assets/brand/caribbeans-logo-white.svg" alt="Caribbean's Avenue" width="124" height="33"></a>
       <p class="tarifa" aria-live="polite"><span class="tarifa-name">Tarifa de tarde</span><span class="tarifa-when">hasta las 22:30</span></p>
       <div class="lang" role="group" aria-label="Idioma">
         <button type="button" data-lang="es" aria-pressed="true">ES</button>
@@ -23,15 +23,27 @@
       </div>
     </header>
 
-    <div class="layout">
-      <main id="carta">
-        <noscript>
-          <p class="noscript">Para ver la carta completa activa JavaScript, o abre la <a href="clasica.html">carta de cócteles</a>.</p>
-        </noscript>
-      </main>
-      <nav class="rail" aria-label="Índice de la carta"></nav>
-    </div>
+    <nav class="nav" aria-label="Secciones de la carta">
+      <div class="nav-inner">
+        <button type="button" class="nav-search" aria-label="Buscar en la carta" aria-expanded="false" aria-controls="buscar">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.25"/><path d="m15.25 15.25 5 5"/></svg>
+        </button>
+        <ol class="chips"></ol>
+        <form class="search" id="buscar" role="search" hidden>
+          <label class="search-field">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.25"/><path d="m15.25 15.25 5 5"/></svg>
+            <input class="search-input" type="search" enterkeyhint="search" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="Buscar en la carta" placeholder="Buscar bebida o ingrediente">
+          </label>
+          <button type="button" class="search-close">Cerrar</button>
+        </form>
+        <p class="search-status sr-only" aria-live="polite"></p>
+      </div>
+    </nav>
 
-    <div class="bubble" aria-hidden="true"><span class="bubble-title"></span><span class="bubble-family"></span></div>
+    <main id="carta">
+      <noscript>
+        <p class="noscript">Para ver la carta completa activa JavaScript, o abre la <a href="clasica.html">carta de cócteles</a>.</p>
+      </noscript>
+    </main>
   </body>
 </html>
